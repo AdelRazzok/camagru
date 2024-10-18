@@ -1,3 +1,0 @@
-https://medium.com/@dilankayasuru/budling-a-minimal-mvc-application-in-vanilla-php-a-step-by-step-guide-75c185604c65
-
-https://github.com/AntonyZ89/vanilla-php-mvc/blob/main/app/http/Request.php
