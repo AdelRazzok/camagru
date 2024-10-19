@@ -1,0 +1,18 @@
+services:
+  php-apache:
+    container_name: php-apache
+    image: php-apache
+    networks:
+      - camagru
+    build:
+      context: ./php-apache
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    ports:
+      - "8000:80"
+    restart: on-failure
+
+networks:
+  camagru:
+    driver: bridge
