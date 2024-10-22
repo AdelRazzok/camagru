@@ -13,6 +13,10 @@ RUN apt-get update && apt-get install -y \
 
 COPY /src /var/www/html/
 
-# COPY php.ini /usr/local/etc/php/conf.d/
+RUN mv "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"
+
+COPY apache2.conf /etc/apache2/conf-available/servername.conf
+
+RUN a2enconf servername
 
 EXPOSE 80

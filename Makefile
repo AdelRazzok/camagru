@@ -1,4 +1,5 @@
 all:
+	mkdir -p C:\Users\skurt\Desktop\camagru\postgres
 	docker-compose -f docker-composer.yml up -d --build
 
 up:
@@ -7,7 +8,8 @@ up:
 down:
 	docker-compose -f docker-composer.yml down
 
-fclean:
+fclean: down
 	docker system prune -af --volumes
+	rm -rf C:\Users\skurt\Desktop\camagru
 
 re: fclean all

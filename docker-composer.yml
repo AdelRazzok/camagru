@@ -11,7 +11,31 @@ services:
       - .env
     ports:
       - "8000:80"
+    depends_on:
+      - postgres
     restart: on-failure
+  
+  postgres:
+    container_name: postgres
+    image: postgres
+    networks:
+      - camagru
+    build:
+      context: ./postgres
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    restart: on-failure
+
+volumes:
+  postgres:
+    driver: local
+    driver_opts:
+      type: none
+      device: C:\Users\skurt\Desktop\camagru\postgres
+      o: bind
 
 networks:
   camagru:
