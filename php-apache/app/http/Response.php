@@ -4,45 +4,75 @@ namespace app\http;
 
 class Response
 {
-    private array $headers;
-    private string $body;
-    private int $statusCode;
+    public const HTTP_OK = 200;
+    public const HTTP_CREATED = 201;
+    public const HTTP_SEE_OTHER = 303;
+    public const HTTP_BAD_REQUEST = 400;
+    public const HTTP_UNAUTHORIZED = 401;
+    public const HTTP_FORBIDDEN = 403;
+    public const HTTP_NOT_FOUND = 404;
+    public const HTTP_INTERNAL_SERVER_ERROR = 500;
 
-    public function __construct($headers, $body, $statusCode = 200)
+    private int $statusCode;
+    private array $headers;
+    private ?string $body;
+    private string $contentType;
+
+    public function __construct(int $statusCode = 200, array $headers = [], ?string $body = '', string $contentType = 'text/html')
     {
+        $this->statusCode = $statusCode;
         $this->headers = $headers;
         $this->body = $body;
-        $this->statusCode = $statusCode;
+        $this->setContentType($contentType);
     }
 
-    public function addHeader(string $header, string $value): void
+    public function setContentType(string $contentType): void
     {
-        $this->headers[$header] = $value;
+        $this->contentType = $contentType;
+        $this->addHeader('Content-Type', $contentType);
+    }
+
+    public function addHeader(string $name, string $value): void
+    {
+        $this->headers[$name] = $value;
+    }
+
+    private function sendHeaders(): void
+    {
+        http_response_code($this->statusCode);
+
+        foreach ($this->headers as $name => $value) {
+            header("$name: $value");
+        }
+    }
+
+    private function sendBody(): void
+    {
+        if (empty($this->body)) {
+            $body = $this->generateDefaultBody();
+        }
+
+        if ($this->contentType === 'text/html') {
+            $body = $this->body;
+        } else if ($this->contentType === 'application/json') {
+            $body = json_encode($this->body);
+        }
+        echo $body;
+    }
+
+    private function generateDefaultBody()
+    {
+        if ($this->statusCode >= 400) {
+            $text = 'Error: ' . $this->statusCode;
+        } else {
+            $text = 'Default body: ' . $this->statusCode;
+        }
+        return "<html><body><h1>$text</h1></body></html>";
     }
 
     public function send(): void
     {
-        http_response_code($this->statusCode);
-
-        foreach ($this->headers as $header => $value) {
-            header("$header: $value");
-        }
-
-        echo $this->body;
-    }
-
-    public function getHeaders(): array
-    {
-        return $this->headers;
-    }
-
-    public function getBody(): string
-    {
-        return $this->body;
-    }
-
-    public function getStatusCode(): int
-    {
-        return $this->statusCode;
+        $this->sendHeaders();
+        $this->sendBody();
     }
 }
