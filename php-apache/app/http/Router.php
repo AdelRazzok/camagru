@@ -3,45 +3,44 @@
 namespace app\http;
 
 use app\http\Request;
+use Exception;
 
 class Router
 {
-    private string $url;
     private array $routes;
     private Request $request;
-    private array $middlewares;
 
     public function __construct()
     {
         $this->request = new Request();
     }
 
-    public function get(string $route, string $controller, array $params): void
+    public function get(string $route, callable|array $action, array $options = []): void
     {
-        $this->addRoute('GET', $route, $controller, $params);
+        $this->addRoute('GET', $route, $action, $options);
     }
 
-    public function post(string $route, string $controller, array $params): void
+    public function post(string $route, callable|array $action, array $options = []): void
     {
-        $this->addRoute('POST', $route, $controller, $params);
+        $this->addRoute('POST', $route, $action, $options);
     }
 
-    public function put(string $route, string $controller, array $params): void
+    public function put(string $route, callable|array $action, array $options = []): void
     {
-        $this->addRoute('PUT', $route, $controller, $params);
+        $this->addRoute('PUT', $route, $action, $options);
     }
 
-    public function patch(string $route, string $controller, array $params): void
+    public function patch(string $route, callable|array $action, array $options = []): void
     {
-        $this->addRoute('PATCH', $route, $controller, $params);
+        $this->addRoute('PATCH', $route, $action, $options);
     }
 
-    public function delete(string $route, string $controller, array $params): void
+    public function delete(string $route, callable|array $action, array $options = []): void
     {
-        $this->addRoute('DELETE', $route, $controller, $params);
+        $this->addRoute('DELETE', $route, $action, $options);
     }
 
-    public function addRoute(string $method, string $route, callable|array $action, array $rules = ['@', '?']): void
+    public function addRoute(string $method, string $route, callable|array $action, array $options = []): void
     {
         $pattern = '/{([^}]+)}/';
 
@@ -51,10 +50,49 @@ class Router
             $routeParams = $matches[1];
         }
 
+        $middlewares = $options['middlewares'] ?? [];
+
         $this->routes[$method][$route] = [
             'action' => $action,
             'route-params' => $routeParams,
-            'rules' => $rules,
+            'middlewares' => $middlewares
         ];
+    }
+
+    public function dispatch(Request $request)
+    {
+        $uri = $request->getUri();
+        $method = $request->getMethod();
+
+        foreach ($this->routes[$method] ?? [] as $route => $details) {
+            $pattern = "/^" . str_replace('/', '\/', $route) . "$/";
+
+            if (preg_match($pattern, $uri, $matches)) {
+                unset($matches[0]);
+
+                foreach ($details['middlewares'] as $middleware) {
+                    $middlewareInstance = new $middleware();
+                    $response = $middlewareInstance->handle($request, function() {
+                        return null;
+                    });
+
+                    if ($response instanceof Response) {
+                        return $response->send();
+                    }
+                }
+
+                $action = $details['action'];
+                list($controller, $method) = $action; 
+  
+                $controllerInstance = new $controller();
+                return call_user_func_array([$controllerInstance, $method], $matches);
+            }
+        }
+        throw new Exception('Route not found');
+    }
+
+    public function run()
+    {
+        $this->dispatch($this->request);
     }
 }
