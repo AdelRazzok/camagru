@@ -6,11 +6,7 @@ class HomeController
 {
     public function index()
     {
-        echo '
-        <html>
-            <body>
-                <h1>Camagru - Home</h1>
-            </body>
-        </html>';
+        $title = 'Camagru - Home';
+        require_once dirname(__DIR__) . '/views/home/index.php';
     }
 }
