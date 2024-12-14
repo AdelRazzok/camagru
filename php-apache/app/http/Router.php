@@ -1,8 +1,8 @@
 <?php
 
-namespace app\http;
+namespace http;
 
-use app\http\Request;
+use http\Request;
 use Exception;
 
 class Router

@@ -2,8 +2,8 @@
 
 require_once __DIR__ . '/autoload.php';
 
-use app\http\Router;
-use app\controllers\HomeController;
+use http\Router;
+use controllers\HomeController;
 
 session_start();
 

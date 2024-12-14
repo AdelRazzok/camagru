@@ -1,7 +1,7 @@
 <?php
 
-use app\models\User;
-use app\repositories\RepositoryInterface;
+use models\User;
+use repositories\RepositoryInterface;
 
 class UserRepository implements RepositoryInterface
 {

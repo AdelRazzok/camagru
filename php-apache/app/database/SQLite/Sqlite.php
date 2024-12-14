@@ -1,8 +1,8 @@
 <?php
 
-namespace app\database\SQLite;
+namespace database\SQLite;
 
-use app\database\Database;
+use database\Database;
 use PDO;
 use PDOException;
 

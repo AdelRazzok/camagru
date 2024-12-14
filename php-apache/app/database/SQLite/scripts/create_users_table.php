@@ -2,7 +2,7 @@
 
 require_once dirname(__DIR__, 3) . '/autoload.php';
 
-use app\database\SQLite\Sqlite;
+use database\SQLite\Sqlite;
 
 $db = new Sqlite(dirname(__DIR__) . '/camagru.db');
 $conn = $db->getConnection();
