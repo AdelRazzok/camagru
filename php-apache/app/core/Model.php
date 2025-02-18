@@ -8,7 +8,14 @@ abstract class Model
 {
     protected DateTime $created_at;
     protected DateTime $updated_at;
-    protected array $errors = [];
+    protected array $errors;
+
+    public function __constructor()
+    {
+        $this->created_at = new DateTime();
+        $this->updated_at = new DateTime();
+        $this->errors = [];
+    }
 
     public function getCreatedAt(): DateTime
     {
