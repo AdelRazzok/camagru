@@ -10,7 +10,7 @@ abstract class Model
     protected DateTime $updated_at;
     protected array $errors;
 
-    public function __constructor()
+    public function __construct()
     {
         $this->created_at = new DateTime();
         $this->updated_at = new DateTime();
