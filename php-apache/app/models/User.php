@@ -18,6 +18,11 @@ class User extends Model
         return $this->id;
     }
 
+    public function setId(int $id): void
+    {
+        $this->id = $id;
+    }
+
     public function getEmail(): string
     {
         return $this->email;
@@ -36,6 +41,11 @@ class User extends Model
     public function setUsername(string $username): void
     {
         $this->username = $username;
+    }
+
+    public function getHashedPassword(): string
+    {
+        return $this->hashed_password;
     }
 
     public function setPassword(string $password): void
