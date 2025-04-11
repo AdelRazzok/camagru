@@ -2,7 +2,10 @@
 
 <main class="flex min-h-svh w-full items-center justify-center p-6 md:p-10 bg-gray-100">
     <div class="bg-white rounded-xl shadow-lg p-8 w-full max-w-md">
-        <h1 class="text-2xl text-center mb-7 playwrite-be-vlg-400">Camagru</h1>
+        <a href="/">
+            <h1 class="text-2xl text-center mb-7 playwrite-be-vlg-400">Camagru</h1>
+        </a>
+
         <form action="#" method="post" class="flex flex-col space-y-4">
             <div class="flex flex-col">
                 <label for="username" class="text-sm text-gray-600 font-semibold mb-1">Username</label>
