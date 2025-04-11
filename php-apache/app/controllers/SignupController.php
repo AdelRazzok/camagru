@@ -2,6 +2,11 @@
 
 namespace controllers;
 
+use http\Response;
+use models\User;
+use repositories\SQLUserRepository;
+use database\SQLite\Sqlite;
+
 class SignupController
 {
     public function index()
@@ -10,5 +15,27 @@ class SignupController
         require_once dirname(__DIR__) . '/views/signup/index.php';
     }
 
-    public function store() {}
+    public function store()
+    {
+        $user = new User();
+        $user->setEmail($_POST['email']);
+        $user->setUsername($_POST['username']);
+        $user->setPassword($_POST['password']);
+
+        if (!$user->validate()) {
+            $_SESSION['errors'] = $user->getErrors();
+
+            $response = new Response(Response::HTTP_SEE_OTHER);
+            $response->addHeader('Location', '/signup');
+            $response->send();
+            exit;
+        }
+
+        // $repository = new SQLUserRepository(new Sqlite('camagru.db'));
+        // $repository->save($user);
+
+        // $response = new Response(Response::HTTP_CREATED);
+        // $response->addHeader('Location', '/login');
+        // $response->send();
+    }
 }

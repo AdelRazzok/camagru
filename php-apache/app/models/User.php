@@ -9,6 +9,7 @@ class User extends Model
     protected int $id;
     protected string $email;
     protected string $username;
+    protected string $password;
     protected string $hashed_password;
     protected bool $email_verified;
     protected bool $email_notif_on_comment;
@@ -43,23 +44,18 @@ class User extends Model
         $this->username = $username;
     }
 
+    public function setPassword(string $password): void
+    {
+        $this->password = $password;
+    }
+
     public function getHashedPassword(): string
     {
         return $this->hashed_password;
     }
 
-    public function setPassword(string $password): void
+    public function setHashedPassword(string $password): void
     {
-        unset($this->errors['password']);
-
-        if (empty($password)) {
-            $error['password'] = 'Password is required.';
-            return;
-        } else if (strlen($password) < 8) {
-            $error['password'] = 'Password must be at least 8 characters long.';
-            return;
-        }
-
         $this->hashed_password = password_hash($password, PASSWORD_DEFAULT);
     }
 
@@ -98,6 +94,12 @@ class User extends Model
             $this->errors['email'] = 'Invalid email format.';
         } elseif (strlen($this->email) > 254) {
             $this->errors['email'] = 'Email is too long.';
+        }
+
+        if (empty($this->password)) {
+            $this->errors['password'] = 'Password is required.';
+        } else if (strlen($this->password) < 8) {
+            $this->errors['password'] = 'Password must be at least 8 characters long.';
         }
 
         if (empty($this->username)) {

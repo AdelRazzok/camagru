@@ -1,7 +1,10 @@
 <?php
 
+namespace repositories;
+
 use models\User;
 use repositories\interfaces\UserRepositoryInterface;
+use InvalidArgumentException;
 use PDO;
 
 class SQLUserRepository implements UserRepositoryInterface
