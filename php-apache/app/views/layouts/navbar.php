@@ -1,4 +1,4 @@
-<?php if ($_SESSION['user']) : ?>
+<?php if (isset($_SESSION['user'])) : ?>
     <nav class="sticky bottom-0 w-full bg-sky-400 px-3 py-2">
         <div class="flex justify-between items-center px-4">
             <a href="/" class="text-white px-1 rounded focus:ring-2 focus:ring-white"><i class="fa-solid fa-house"></i></a>
