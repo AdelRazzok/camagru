@@ -9,10 +9,10 @@ $inputClasses = function ($field) use ($errors) {
 <main class="flex min-h-svh w-full items-center justify-center p-6 md:p-10 bg-gray-100">
     <div class="bg-white rounded-xl shadow-lg p-8 w-full max-w-md">
         <a href="/">
-            <h1 class="text-2xl text-center mb-7 playwrite-be-vlg-400">Camagru</h1>
+            <h1 class="text-2xl text-center mb-8 playwrite-be-vlg-400">Camagru</h1>
         </a>
 
-        <form action="/signup" method="post" class="flex flex-col space-y-4">
+        <form action="/signup" method="post" class="flex flex-col">
             <div class="flex flex-col">
                 <label for="email" class="text-sm text-gray-600 font-semibold mb-1">Email</label>
                 <input type="email" name="email" placeholder="john.doe@example.com" class="<?= $inputClasses('email') ?>" value="<?= $old['email'] ?? '' ?>" required>
@@ -22,7 +22,7 @@ $inputClasses = function ($field) use ($errors) {
                 <?php endif; ?>
             </div>
 
-            <div class="flex flex-col">
+            <div class="flex flex-col mt-4">
                 <label for="username" class="text-sm text-gray-600 font-semibold mb-1">Username</label>
                 <input type="text" name="username" placeholder="john_doe" class="<?= $inputClasses('username') ?>" value="<?= $old['username'] ?? '' ?>" required>
 
@@ -31,7 +31,7 @@ $inputClasses = function ($field) use ($errors) {
                 <?php endif; ?>
             </div>
 
-            <div class="flex flex-col">
+            <div class="flex flex-col mt-4">
                 <label for="password" class="text-sm text-gray-600 font-semibold mb-1">Password</label>
                 <div class="relative">
                     <input type="password" id="password" name="password" placeholder="**********" class="w-full <?= $inputClasses('password') ?>" required>
@@ -43,7 +43,7 @@ $inputClasses = function ($field) use ($errors) {
                 <?php endif; ?>
             </div>
 
-            <button type="submit" class="bg-sky-500 text-white py-2 px-4 rounded hover:bg-sky-600 transition duration-200">Sign up</button>
+            <button type="submit" class="bg-sky-500 text-white mt-6 py-2 px-4 rounded hover:bg-sky-600 transition duration-200">Sign up</button>
         </form>
 
         <div class="text-center mt-6 text-sm text-gray-600">

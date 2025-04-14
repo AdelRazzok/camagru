@@ -3,16 +3,16 @@
 <main class="flex min-h-svh w-full items-center justify-center p-6 md:p-10 bg-gray-100">
     <div class="bg-white rounded-xl shadow-lg p-8 w-full max-w-md">
         <a href="/">
-            <h1 class="text-2xl text-center mb-7 playwrite-be-vlg-400">Camagru</h1>
+            <h1 class="text-2xl text-center mb-8 playwrite-be-vlg-400">Camagru</h1>
         </a>
 
-        <form action="#" method="post" class="flex flex-col space-y-4">
+        <form action="#" method="post" class="flex flex-col">
             <div class="flex flex-col">
                 <label for="username" class="text-sm text-gray-600 font-semibold mb-1">Username</label>
                 <input type="text" name="username" placeholder="john_doe" class="border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-sky-500" required>
             </div>
 
-            <div class="flex flex-col">
+            <div class="flex flex-col mt-4">
                 <label for="password" class="text-sm text-gray-600 font-semibold mb-1">Password</label>
                 <div class="relative">
                     <input type="password" id="password" name="password" placeholder="**********" class="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-sky-500" required>
@@ -20,7 +20,7 @@
                 </div>
             </div>
 
-            <button type="submit" class="bg-sky-500 text-white py-2 px-4 rounded hover:bg-sky-600 transition duration-200">Login</button>
+            <button type="submit" class="bg-sky-500 text-white mt-6 py-2 px-4 rounded hover:bg-sky-600 transition duration-200">Login</button>
         </form>
 
         <div class="text-center mt-4">
