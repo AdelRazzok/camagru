@@ -15,7 +15,7 @@ $inputClasses = function ($field) use ($errors) {
         <form action="/signup" method="post" class="flex flex-col space-y-4">
             <div class="flex flex-col">
                 <label for="email" class="text-sm text-gray-600 font-semibold mb-1">Email</label>
-                <input type="email" name="email" placeholder="john.doe@example.com" class="<?= $inputClasses('email') ?>" required>
+                <input type="email" name="email" placeholder="john.doe@example.com" class="<?= $inputClasses('email') ?>" value="<?= $old['email'] ?? '' ?>" required>
 
                 <?php if (!empty($errors['email'])): ?>
                     <p class="text-red-600 text-sm mt-1"><?= $errors['email'] ?></p>
@@ -24,7 +24,7 @@ $inputClasses = function ($field) use ($errors) {
 
             <div class="flex flex-col">
                 <label for="username" class="text-sm text-gray-600 font-semibold mb-1">Username</label>
-                <input type="text" name="username" placeholder="john_doe" class="<?= $inputClasses('username') ?>" required>
+                <input type="text" name="username" placeholder="john_doe" class="<?= $inputClasses('username') ?>" value="<?= $old['username'] ?? '' ?>" required>
 
                 <?php if (!empty($errors['username'])): ?>
                     <p class="text-red-600 text-sm mt-1"><?= $errors['username'] ?></p>

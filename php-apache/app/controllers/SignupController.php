@@ -14,7 +14,9 @@ class SignupController
     {
         $title = 'Camagru - Sign up';
         $errors = $_SESSION['errors'] ?? [];
-        unset($_SESSION['errors']);
+        $old = $_SESSION['old'] ?? [];
+
+        unset($_SESSION['errors'], $_SESSION['old']);
 
         require_once dirname(__DIR__) . '/views/signup/index.php';
     }
@@ -28,6 +30,11 @@ class SignupController
 
         if (!$user->validate()) {
             $_SESSION['errors'] = $user->getErrors();
+
+            $_SESSION['old'] = [
+                'email' => $user->getEmail(),
+                'username' => $user->getUsername()
+            ];
 
             $response = new Response(Response::HTTP_SEE_OTHER);
             $response->addHeader('Location', '/signup');
