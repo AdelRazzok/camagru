@@ -3,7 +3,6 @@
 namespace controllers;
 
 use http\Response;
-use http\Request;
 use models\User;
 use repositories\SQLUserRepository;
 use database\SQLite\Sqlite;
@@ -24,6 +23,7 @@ class SignupController
     public function store()
     {
         $user = new User();
+        $user->setId(null);
         $user->setEmail($_POST['email']);
         $user->setUsername($_POST['username']);
         $user->setPassword($_POST['password']);
@@ -42,11 +42,15 @@ class SignupController
             exit;
         }
 
-        // $repository = new SQLUserRepository(new Sqlite('camagru.db'));
-        // $repository->save($user);
+        $user->setHashedPassword($_POST['password']);
 
-        // $response = new Response(Response::HTTP_CREATED);
-        // $response->addHeader('Location', '/login');
-        // $response->send();
+        $db = new Sqlite(dirname(__DIR__) . '/database/SQLite/camagru.db');
+        $repository = new SQLUserRepository($db->getConnection());
+        $repository->save($user);
+
+        $response = new Response(Response::HTTP_SEE_OTHER);
+        $response->addHeader('Location', '/login');
+        $response->send();
+        exit;
     }
 }

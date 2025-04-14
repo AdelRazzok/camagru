@@ -6,7 +6,7 @@ use core\Model;
 
 class User extends Model
 {
-    protected int $id;
+    protected ?int $id;
     protected string $email;
     protected string $username;
     protected string $password;
@@ -14,12 +14,18 @@ class User extends Model
     protected bool $email_verified;
     protected bool $email_notif_on_comment;
 
-    public function getId(): int
+    function __construct()
+    {
+        $this->email_verified = false;
+        $this->email_notif_on_comment = false;
+    }
+
+    public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function setId(int $id): void
+    public function setId(?int $id): void
     {
         $this->id = $id;
     }

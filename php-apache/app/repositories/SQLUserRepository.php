@@ -66,7 +66,7 @@ class SQLUserRepository implements UserRepositoryInterface
 
         $stmt->bindValue(':email', $entity->getEmail());
         $stmt->bindValue(':username', $entity->getUsername());
-        $stmt->bindValue(':password', $entity->getHashedPassword());
+        $stmt->bindValue(':hashed_password', $entity->getHashedPassword());
         $stmt->bindValue(':email_verified', $entity->isEmailVerified(), PDO::PARAM_BOOL);
         $stmt->bindValue(':email_notif_on_comment', $entity->isEmailNotifOnComment(), PDO::PARAM_BOOL);
         $stmt->bindValue(':updated_at', $now);
