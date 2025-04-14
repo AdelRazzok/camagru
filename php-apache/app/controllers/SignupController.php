@@ -3,6 +3,7 @@
 namespace controllers;
 
 use http\Response;
+use http\Request;
 use models\User;
 use repositories\SQLUserRepository;
 use database\SQLite\Sqlite;
@@ -12,6 +13,9 @@ class SignupController
     public function index()
     {
         $title = 'Camagru - Sign up';
+        $errors = $_SESSION['errors'] ?? [];
+        unset($_SESSION['errors']);
+
         require_once dirname(__DIR__) . '/views/signup/index.php';
     }
 
