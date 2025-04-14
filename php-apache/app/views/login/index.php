@@ -35,6 +35,4 @@
 
 <script src="/public/js/login.js"></script>
 
-<?php
-require_once dirname(__DIR__) . '/layouts/footer.php';
-?>
+<?php require_once dirname(__DIR__) . '/layouts/footer.php'; ?>

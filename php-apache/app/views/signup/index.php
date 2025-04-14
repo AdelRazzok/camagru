@@ -1,5 +1,7 @@
 <?php require_once dirname(__DIR__) . '/layouts/header.php'; ?>
 
+
+
 <main class="flex min-h-svh w-full items-center justify-center p-6 md:p-10 bg-gray-100">
     <div class="bg-white rounded-xl shadow-lg p-8 w-full max-w-md">
         <a href="/">
@@ -36,6 +38,4 @@
 
 <script src="/public/js/login.js"></script>
 
-<?php
-require_once dirname(__DIR__) . '/layouts/footer.php';
-?>
+<?php require_once dirname(__DIR__) . '/layouts/footer.php'; ?>
