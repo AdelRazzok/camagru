@@ -13,6 +13,8 @@ services:
       - "8000:80"
     depends_on:
       - postgres
+    volumes:
+      - ./php-apache/app:/var/www/html
     restart: on-failure
   
   postgres:
