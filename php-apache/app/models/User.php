@@ -3,6 +3,7 @@
 namespace models;
 
 use core\Model;
+use repositories\interfaces\UserRepositoryInterface;
 
 class User extends Model
 {
@@ -90,7 +91,7 @@ class User extends Model
         $this->email_notif_on_comment = $email_notif_on_comment;
     }
 
-    public function validate()
+    public function validate(UserRepositoryInterface $repository): bool
     {
         $this->errors = [];
 
@@ -100,12 +101,8 @@ class User extends Model
             $this->errors['email'] = 'Invalid email format.';
         } elseif (strlen($this->email) > 254) {
             $this->errors['email'] = 'Email is too long.';
-        }
-
-        if (empty($this->password)) {
-            $this->errors['password'] = 'Password is required.';
-        } else if (strlen($this->password) < 8) {
-            $this->errors['password'] = 'Password must be at least 8 characters long.';
+        } else if ($repository->findByEmail($this->email)) {
+            $this->errors['email'] = 'You can\'t use this email address.';
         }
 
         if (empty($this->username)) {
@@ -114,6 +111,14 @@ class User extends Model
             $this->errors['username'] = 'Username must be between 3 and 20 characters long.';
         } else if (!preg_match('/^[a-zA-Z0-9_-]+$/', $this->username)) {
             $this->errors['username'] = 'Username can only contain letters, numbers, underscores and hyphens.';
+        } else if ($repository->findByUsername($this->username)) {
+            $this->errors['username'] = 'Username is already taken.';
+        }
+
+        if (empty($this->password)) {
+            $this->errors['password'] = 'Password is required.';
+        } else if (strlen($this->password) < 8) {
+            $this->errors['password'] = 'Password must be at least 8 characters long.';
         }
 
         return empty($this->errors);

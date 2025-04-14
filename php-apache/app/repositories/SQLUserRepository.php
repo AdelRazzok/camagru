@@ -36,6 +36,26 @@ class SQLUserRepository implements UserRepositoryInterface
         return $userData ? $this->mapToUser($userData) : null;
     }
 
+    public function findByEmail(string $email): ?User
+    {
+        $stmt = $this->conn->prepare('SELECT * FROM users WHERE email = :email');
+        $stmt->bindValue(':email', $email);
+        $stmt->execute();
+        $userData = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        return $userData ? $this->mapToUser($userData) : null;
+    }
+
+    public function findByUsername(string $username): ?User
+    {
+        $stmt = $this->conn->prepare('SELECT * FROM users WHERE username = :username');
+        $stmt->bindValue(':username', $username);
+        $stmt->execute();
+        $userData = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        return $userData ? $this->mapToUser($userData) : null;
+    }
+
     public function save(User $entity): void
     {
         if (!($entity instanceof User)) {

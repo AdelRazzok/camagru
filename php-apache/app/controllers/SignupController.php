@@ -28,7 +28,10 @@ class SignupController
         $user->setUsername($_POST['username']);
         $user->setPassword($_POST['password']);
 
-        if (!$user->validate()) {
+        $db = new Sqlite(dirname(__DIR__) . '/database/SQLite/camagru.db');
+        $repository = new SQLUserRepository($db->getConnection());
+
+        if (!$user->validate($repository)) {
             $_SESSION['errors'] = $user->getErrors();
 
             $_SESSION['old'] = [
@@ -43,9 +46,6 @@ class SignupController
         }
 
         $user->setHashedPassword($_POST['password']);
-
-        $db = new Sqlite(dirname(__DIR__) . '/database/SQLite/camagru.db');
-        $repository = new SQLUserRepository($db->getConnection());
         $repository->save($user);
 
         $response = new Response(Response::HTTP_SEE_OTHER);
