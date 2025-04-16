@@ -1,6 +1,6 @@
 <?php
 
-namespace database\SQLite;
+namespace database;
 
 use database\Database;
 use PDO;

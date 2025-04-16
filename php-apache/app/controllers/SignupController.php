@@ -5,7 +5,7 @@ namespace controllers;
 use http\Response;
 use models\User;
 use repositories\SQLUserRepository;
-use database\SQLite\Sqlite;
+use database\Sqlite;
 
 class SignupController
 {
