@@ -15,7 +15,7 @@ class User extends Model
     protected bool $email_verified;
     protected bool $email_notif_on_comment;
 
-    function __construct()
+    public function __construct()
     {
         parent::__construct();
         $this->id = null;
