@@ -8,6 +8,7 @@ use controllers\HomeController;
 use controllers\LoginController;
 use controllers\SignupController;
 
+date_default_timezone_set('Europe/Paris');
 session_start();
 
 $router = new Router();
