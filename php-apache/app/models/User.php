@@ -28,9 +28,10 @@ class User extends Model
         return $this->id;
     }
 
-    public function setId(?int $id): void
+    public function setId(?int $id): User
     {
         $this->id = $id;
+        return $this;
     }
 
     public function getEmail(): string
@@ -38,9 +39,10 @@ class User extends Model
         return $this->email;
     }
 
-    public function setEmail(string $email): void
+    public function setEmail(string $email): User
     {
         $this->email = $email;
+        return $this;
     }
 
     public function getUsername(): string
@@ -48,14 +50,16 @@ class User extends Model
         return $this->username;
     }
 
-    public function setUsername(string $username): void
+    public function setUsername(string $username): User
     {
         $this->username = $username;
+        return $this;
     }
 
-    public function setPassword(string $password): void
+    public function setPassword(string $password): User
     {
         $this->password = $password;
+        return $this;
     }
 
     public function getHashedPassword(): string
@@ -63,9 +67,10 @@ class User extends Model
         return $this->hashed_password;
     }
 
-    public function setHashedPassword(string $password): void
+    public function setHashedPassword(string $password): User
     {
         $this->hashed_password = password_hash($password, PASSWORD_DEFAULT);
+        return $this;
     }
 
     public function verifyPassword(string $password): bool
@@ -78,9 +83,10 @@ class User extends Model
         return $this->email_verified;
     }
 
-    public function setEmailVerified(bool $email_verified): void
+    public function setEmailVerified(bool $email_verified): User
     {
         $this->email_verified = $email_verified;
+        return $this;
     }
 
     public function isEmailNotifOnComment(): bool
@@ -88,9 +94,10 @@ class User extends Model
         return $this->email_notif_on_comment;
     }
 
-    public function setEmailNotifOnComment(bool $email_notif_on_comment): void
+    public function setEmailNotifOnComment(bool $email_notif_on_comment): User
     {
         $this->email_notif_on_comment = $email_notif_on_comment;
+        return $this;
     }
 
     public function validate(UserRepositoryInterface $repository): bool

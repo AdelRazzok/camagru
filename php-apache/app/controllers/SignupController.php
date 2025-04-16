@@ -22,10 +22,10 @@ class SignupController
 
     public function store()
     {
-        $user = new User();
-        $user->setEmail($_POST['email']);
-        $user->setUsername($_POST['username']);
-        $user->setPassword($_POST['password']);
+        $user = (new User())
+            ->setEmail($_POST['email'])
+            ->setUsername($_POST['username'])
+            ->setPassword($_POST['password']);
 
         $db = new Sqlite(dirname(__DIR__) . '/database/SQLite/camagru.db');
         $repository = new SQLUserRepository($db->getConnection());
