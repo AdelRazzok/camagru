@@ -23,7 +23,6 @@ class SignupController
     public function store()
     {
         $user = new User();
-        $user->setId(null);
         $user->setEmail($_POST['email']);
         $user->setUsername($_POST['username']);
         $user->setPassword($_POST['password']);

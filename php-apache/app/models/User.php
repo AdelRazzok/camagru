@@ -17,6 +17,8 @@ class User extends Model
 
     function __construct()
     {
+        parent::__construct();
+        $this->id = null;
         $this->email_verified = false;
         $this->email_notif_on_comment = false;
     }
