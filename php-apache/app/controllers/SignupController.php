@@ -3,12 +3,21 @@
 namespace controllers;
 
 use http\Response;
-use models\User;
 use repositories\SQLUserRepository;
 use database\Sqlite;
+use services\UserService;
 
 class SignupController
 {
+    private UserService $userService;
+
+    public function __construct()
+    {
+        $db = new Sqlite(dirname(__DIR__) . '/database/SQLite/camagru.db');
+        $repository = new SQLUserRepository($db->getConnection());
+        $this->userService = new UserService($repository);
+    }
+
     public function index()
     {
         $title = 'Camagru - Sign up';
@@ -22,30 +31,21 @@ class SignupController
 
     public function store()
     {
-        $user = (new User())
-            ->setEmail($_POST['email'])
-            ->setUsername($_POST['username'])
-            ->setPassword($_POST['password']);
+        $result = $this->userService->createUser(
+            $_POST['email'],
+            $_POST['username'],
+            $_POST['password']
+        );
 
-        $db = new Sqlite(dirname(__DIR__) . '/database/SQLite/camagru.db');
-        $repository = new SQLUserRepository($db->getConnection());
-
-        if (!$user->validate($repository)) {
-            $_SESSION['errors'] = $user->getErrors();
-
-            $_SESSION['old'] = [
-                'email' => $user->getEmail(),
-                'username' => $user->getUsername()
-            ];
+        if (!$result['success']) {
+            $_SESSION['errors'] = $result['errors'];
+            $_SESSION['old'] = $result['data'];
 
             $response = new Response(Response::HTTP_SEE_OTHER);
             $response->addHeader('Location', '/signup');
             $response->send();
             exit;
         }
-
-        $user->setHashedPassword($_POST['password']);
-        $repository->save($user);
 
         $response = new Response(Response::HTTP_SEE_OTHER);
         $response->addHeader('Location', '/login');
