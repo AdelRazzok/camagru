@@ -56,15 +56,15 @@ class SQLUserRepository implements UserRepositoryInterface
         return $userData ? $this->mapToUser($userData) : null;
     }
 
-    public function save(User $entity): void
+    public function save(User $user): void
     {
-        if (!($entity instanceof User)) {
-            throw new InvalidArgumentException('Expected instance of User');
+        if (!($user instanceof User)) {
+            throw new InvalidArgumentException('Expected instance of User.');
         }
 
         $now = date('Y-m-d H:i:s');
 
-        if ($entity->getId()) {
+        if ($user->getId()) {
             $stmt = $this->conn->prepare(
                 'UPDATE users
                     SET email = :email,
@@ -75,7 +75,7 @@ class SQLUserRepository implements UserRepositoryInterface
                         updated_at = :updated_at
                     WHERE id = :id'
             );
-            $stmt->bindValue(':id', $entity->getId(), PDO::PARAM_INT);
+            $stmt->bindValue(':id', $user->getId(), PDO::PARAM_INT);
         } else {
             $stmt = $this->conn->prepare(
                 'INSERT INTO users (email, username, password, email_verified, email_notif_on_comment, created_at, updated_at)
@@ -84,11 +84,11 @@ class SQLUserRepository implements UserRepositoryInterface
             $stmt->bindValue(':created_at', $now);
         }
 
-        $stmt->bindValue(':email', $entity->getEmail());
-        $stmt->bindValue(':username', $entity->getUsername());
-        $stmt->bindValue(':hashed_password', $entity->getHashedPassword());
-        $stmt->bindValue(':email_verified', $entity->isEmailVerified(), PDO::PARAM_BOOL);
-        $stmt->bindValue(':email_notif_on_comment', $entity->isEmailNotifOnComment(), PDO::PARAM_BOOL);
+        $stmt->bindValue(':email', $user->getEmail());
+        $stmt->bindValue(':username', $user->getUsername());
+        $stmt->bindValue(':hashed_password', $user->getHashedPassword());
+        $stmt->bindValue(':email_verified', $user->isEmailVerified(), PDO::PARAM_BOOL);
+        $stmt->bindValue(':email_notif_on_comment', $user->isEmailNotifOnComment(), PDO::PARAM_BOOL);
         $stmt->bindValue(':updated_at', $now);
         $stmt->execute();
     }
@@ -102,12 +102,12 @@ class SQLUserRepository implements UserRepositoryInterface
 
     private function mapToUser(array $userData): User
     {
-        $user = new User();
-        $user->setId($userData['id']);
-        $user->setEmail($userData['email']);
-        $user->setUsername($userData['username']);
-        $user->setEmailVerified($userData['email_verified']);
-        $user->setEmailNotifOnComment($userData['email_notif_on_comment']);
+        $user = (new User())
+            ->setId($userData['id'])
+            ->setEmail($userData['email'])
+            ->setUsername($userData['username'])
+            ->setEmailVerified($userData['email_verified'])
+            ->setEmailNotifOnComment($userData['email_notif_on_comment']);
         return $user;
     }
 }
