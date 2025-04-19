@@ -14,7 +14,8 @@ $sql = 'CREATE TABLE IF NOT EXISTS tokens (
     type TEXT NOT NULL,
     expires_at DATETIME NOT NULL,
     created_at DATETIME NOT NULL,
-    updated_at DATETIME NOT NULL
+    updated_at DATETIME NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 )';
 
 $conn->exec($sql);
