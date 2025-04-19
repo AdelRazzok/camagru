@@ -56,7 +56,7 @@ class SQLUserRepository implements UserRepositoryInterface
         return $userData ? $this->mapToUser($userData) : null;
     }
 
-    public function save(User $user): void
+    public function save(User $user): User
     {
         if (!($user instanceof User)) {
             throw new InvalidArgumentException('Expected instance of User.');
@@ -91,6 +91,11 @@ class SQLUserRepository implements UserRepositoryInterface
         $stmt->bindValue(':email_notif_on_comment', $user->isEmailNotifOnComment(), PDO::PARAM_BOOL);
         $stmt->bindValue(':updated_at', $now);
         $stmt->execute();
+
+        if (!$user->getId()) {
+            $user->setId((int)$this->conn->lastInsertId());
+        }
+        return $user;
     }
 
     public function delete(int $id): void
