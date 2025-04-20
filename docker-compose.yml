@@ -30,15 +30,15 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - postgres:/var/lib/postgresql/data
+      - database:/var/lib/postgresql/data
     restart: on-failure
 
 volumes:
-  postgres:
+  database:
     driver: local
     driver_opts:
       type: none
-      device: C:\Users\skurt\Desktop\camagru\postgres
+      device: C:\Users\skurt\Desktop\camagru\database
       o: bind
 
 networks:
