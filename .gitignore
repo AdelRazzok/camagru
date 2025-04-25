@@ -3,3 +3,6 @@
 
 # database files
 *.db
+
+# VS Code settings
+.vscode
