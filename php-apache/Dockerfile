@@ -11,6 +11,8 @@ RUN apt-get update && apt-get install -y \
   && docker-php-ext-install -j$(nproc) gd \
   && docker-php-ext-install pgsql pdo_pgsql curl fileinfo mbstring exif
 
+RUN a2enmod rewrite
+
 COPY /app /var/www/html/
 
 RUN mv "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"
