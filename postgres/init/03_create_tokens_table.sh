@@ -7,7 +7,7 @@ psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$DB_NAME" <<-EOSQL
         id SERIAL PRIMARY KEY,
         user_id INTEGER NOT NULL,
         token TEXT NOT NULL,
-        token_type TEXT NOT NULL,
+        type TEXT NOT NULL,
         expires_at TIMESTAMP WITHOUT TIME ZONE NOT NULL,
         created_at TIMESTAMP WITHOUT TIME ZONE NOT NULL,
         updated_at TIMESTAMP WITHOUT TIME ZONE NOT NULL,
