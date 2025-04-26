@@ -20,7 +20,7 @@ class User extends Model
         parent::__construct();
         $this->id = null;
         $this->email_verified = false;
-        $this->email_notif_on_comment = false;
+        $this->email_notif_on_comment = true;
     }
 
     public function getId(): ?int
