@@ -63,7 +63,7 @@ class SQLTokenRepository implements TokenRepositoryInterface
                 'UPDATE tokens
                     SET user_id = :user_id,
                         token = :token,
-                        type = :type
+                        type = :type,
                         expires_at = :expires_at,
                         updated_at = :updated_at
                     WHERE id = :id'
@@ -72,7 +72,7 @@ class SQLTokenRepository implements TokenRepositoryInterface
         } else {
             $stmt = $this->conn->prepare(
                 'INSERT INTO tokens (user_id, token, type, expires_at, updated_at)
-                    VALUES (:user_id, :token, :type, :expires_at, :updated_at)'
+                    VALUES (:user_id, :token, :type, :expires_at, :created_at, :updated_at)'
             );
             $stmt->bindValue(':created_at', $now);
         }
