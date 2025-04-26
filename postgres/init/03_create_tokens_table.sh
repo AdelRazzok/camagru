@@ -3,7 +3,7 @@
 set -e
 
 psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$DB_NAME" <<-EOSQL
-    CREATE TABLE IF NOT EXISTS users (
+    CREATE TABLE IF NOT EXISTS tokens (
         id SERIAL PRIMARY KEY,
         user_id INTEGER NOT NULL,
         token TEXT NOT NULL,
