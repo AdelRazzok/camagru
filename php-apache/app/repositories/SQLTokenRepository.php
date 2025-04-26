@@ -71,7 +71,7 @@ class SQLTokenRepository implements TokenRepositoryInterface
             $stmt->bindValue(':id', $token->getId(), PDO::PARAM_INT);
         } else {
             $stmt = $this->conn->prepare(
-                'INSERT INTO tokens (user_id, token, type, expires_at, updated_at)
+                'INSERT INTO tokens (user_id, token, type, expires_at, created_at, updated_at)
                     VALUES (:user_id, :token, :type, :expires_at, :created_at, :updated_at)'
             );
             $stmt->bindValue(':created_at', $now);
@@ -79,7 +79,7 @@ class SQLTokenRepository implements TokenRepositoryInterface
 
         $stmt->bindValue(':user_id', $token->getUserId(), PDO::PARAM_INT);
         $stmt->bindValue(':token', $token->getToken());
-        $stmt->bindValue(':type', $token->getType());
+        $stmt->bindValue(':type', $token->getTypeValue());
         $stmt->bindValue(':expires_at', $expiresAt);
         $stmt->bindValue(':updated_at', $now);
         $stmt->execute();
