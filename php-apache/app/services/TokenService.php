@@ -33,8 +33,23 @@ class TokenService implements TokenServiceInterface
         ];
     }
 
-    public function verifyToken(int $userId, TokenType $type): bool
+    public function verifyToken(string $token, TokenType $type): array
     {
-        return true;
+        $tokenEntity = $this->tokenRepository->findByToken($token, $type);
+
+        if (!$tokenEntity) {
+            return ['success' => false, 'message' => 'Token not found.'];
+        }
+
+        $now = new DateTime();
+        if ($tokenEntity->getExpiresAt() < $now) {
+            return ['success' => false, 'message' => 'Token expired.'];
+        }
+
+        return [
+            'success' => true,
+            'userId' => $tokenEntity->getUserId(),
+            'token' => $tokenEntity
+        ];
     }
 }
