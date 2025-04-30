@@ -41,7 +41,17 @@ class EmailService implements EmailServiceInterface
         return mail($to, $subject, $body, implode("\r\n", $headers));
     }
 
-    public function sendVerification() {}
+    public function sendVerification(string $to, string $username, string $token): bool
+    {
+        $subject = 'Verify your email';
+
+        $data = [
+            'username' => $username,
+            'verificationLink' => $this->baseUrl . 'verify-account?token=' . $token
+        ];
+        return $this->send($to, $subject, 'verification', $data);
+    }
+
     public function sendPasswordReset() {}
     public function sendCommentNotification() {}
 }
