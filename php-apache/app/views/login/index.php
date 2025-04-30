@@ -1,6 +1,19 @@
 <?php require_once dirname(__DIR__) . '/layouts/header.php'; ?>
 
 <main class="flex min-h-svh w-full items-center justify-center p-6 md:p-10 bg-gray-100">
+    <?php if (isset($_SESSION['success']) && !empty($_SESSION['success'])): ?>
+        <div id="toast-success" class="fixed top-4 left-1/2 -translate-x-1/2 w-[90%] md:left-auto md:right-4 md:translate-x-0 md:w-auto bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded shadow-md z-50 transform transition-transform duration-300 ease-in-out">
+            <div class="flex items-center gap-3">
+                <i class="fa-solid fa-circle-check"></i>
+                <p class="text-sm md:pr-3"><?= $_SESSION['success'] ?></p>
+            </div>
+
+            <button type="button" class="absolute top-0 right-1 text-green-700" onclick="closeToast('toast-success')">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+    <?php endif; ?>
+
     <div class="bg-white rounded-xl shadow-lg p-8 w-full max-w-md">
         <a href="/">
             <h1 class="text-2xl text-center mb-8 playwrite-be-vlg-400">Camagru</h1>
@@ -34,5 +47,6 @@
 </main>
 
 <script src="/public/js/login.js"></script>
+<script src="/public/js/toast.js"></script>
 
 <?php require_once dirname(__DIR__) . '/layouts/footer.php'; ?>
