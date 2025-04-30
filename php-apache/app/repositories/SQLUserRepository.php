@@ -111,6 +111,7 @@ class SQLUserRepository implements UserRepositoryInterface
             ->setId($userData['id'])
             ->setEmail($userData['email'])
             ->setUsername($userData['username'])
+            ->setHashedPassword($userData['password'])
             ->setEmailVerified($userData['email_verified'])
             ->setEmailNotifOnComment($userData['email_notif_on_comment']);
         return $user;

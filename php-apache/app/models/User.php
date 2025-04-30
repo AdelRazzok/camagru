@@ -67,9 +67,9 @@ class User extends Model
         return $this->hashed_password;
     }
 
-    public function setHashedPassword(string $password): User
+    public function setHashedPassword(string $hashed_password): User
     {
-        $this->hashed_password = password_hash($password, PASSWORD_DEFAULT);
+        $this->hashed_password = $hashed_password;
         return $this;
     }
 

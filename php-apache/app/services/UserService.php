@@ -33,8 +33,27 @@ class UserService implements UserServiceInterface
             ];
         }
 
-        $user->setHashedPassword($password);
+        $user->setHashedPassword(password_hash($password, PASSWORD_DEFAULT));
         $this->userRepository->save($user);
+
+        return [
+            'success' => true,
+            'user' => $user
+        ];
+    }
+
+    public function authenticateUser(string $username, string $password): array
+    {
+        $user = $this->userRepository->findByUsername($username);
+
+        if (!$user || !$user->verifyPassword($password)) {
+            return [
+                'success' => false,
+                'errors' => ['Invalid username or password']
+            ];
+        }
+
+        // TODO: Check if the user has a verified email
 
         return [
             'success' => true,
