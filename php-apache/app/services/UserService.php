@@ -44,12 +44,19 @@ class UserService implements UserServiceInterface
 
     public function authenticateUser(string $username, string $password): array
     {
+        if (empty($username) || empty($password)) {
+            return [
+                'success' => false,
+                'error' => 'Username and password are required.'
+            ];
+        }
+
         $user = $this->userRepository->findByUsername($username);
 
         if (!$user || !$user->verifyPassword($password)) {
             return [
                 'success' => false,
-                'errors' => ['Invalid username or password']
+                'error' => 'Invalid username or password.'
             ];
         }
 

@@ -28,8 +28,10 @@ class LoginController
     {
         $title = 'Camagru - Login';
         $success = $_SESSION['success'] ?? [];
+        $error = $_SESSION['error'] ?? [];
+        $old = $_SESSION['old'] ?? [];
 
-        unset($_SESSION['success']);
+        unset($_SESSION['success'], $_SESSION['error'], $_SESSION['old']);
 
         require_once dirname(__DIR__) . '/views/login/index.php';
     }
@@ -39,7 +41,7 @@ class LoginController
         $result = $this->userService->authenticateUser($_POST['username'], $_POST['password']);
 
         if (!$result['success']) {
-            $_SESSION['errors'] = $result['errors'];
+            $_SESSION['error'] = $result['error'];
             $_SESSION['old'] = [
                 'username' => $_POST['username']
             ];
