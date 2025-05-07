@@ -47,7 +47,7 @@ class EmailService implements EmailServiceInterface
         $result = mail($to, $subject, $body, implode("\r\n", $headers));
 
         if (!$result) {
-            $errorInfo = error_get_last() ? error_get_last()['message'] : 'Unkown.';
+            $errorInfo = error_get_last() ? error_get_last()['message'] : 'Unknown.';
 
             $this->logService->error(
                 "Fail to send email - Recipient: {$to}, Subject: {$subject}, Error: {$errorInfo}",
