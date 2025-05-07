@@ -29,7 +29,8 @@ class TokenService implements TokenServiceInterface
 
         return [
             'success' => true,
-            'token' => $token
+            'token' => $token,
+            'message' => 'Account created successfully. Please check your inbox to activate it.'
         ];
     }
 

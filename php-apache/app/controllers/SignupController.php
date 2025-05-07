@@ -74,7 +74,7 @@ class SignupController
                 $tokenResult['token']->getToken()
             );
 
-            $_SESSION['success'] = 'Your account has been successfully created. Please check your inbox to activate your account.';
+            $_SESSION['success'] = $tokenResult['message'];
         }
 
         $response = new Response(Response::HTTP_SEE_OTHER);

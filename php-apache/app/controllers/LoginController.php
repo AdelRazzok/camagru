@@ -27,8 +27,11 @@ class LoginController
     public function index()
     {
         $title = 'Camagru - Login';
-        require_once dirname(__DIR__) . '/views/login/index.php';
+        $success = $_SESSION['success'] ?? [];
+
         unset($_SESSION['success']);
+
+        require_once dirname(__DIR__) . '/views/login/index.php';
     }
 
     public function authenticate()
