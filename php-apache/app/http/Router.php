@@ -3,6 +3,7 @@
 namespace http;
 
 use http\Request;
+use http\exceptions\NotFoundException;
 use Exception;
 
 class Router
@@ -72,7 +73,7 @@ class Router
 
                 foreach ($details['middlewares'] as $middleware) {
                     $middlewareInstance = new $middleware();
-                    $response = $middlewareInstance->handle($request, function() {
+                    $response = $middlewareInstance->handle($request, function () {
                         return null;
                     });
 
@@ -82,17 +83,22 @@ class Router
                 }
 
                 $action = $details['action'];
-                list($controller, $method) = $action; 
-  
+                list($controller, $method) = $action;
+
                 $controllerInstance = new $controller();
                 return call_user_func_array([$controllerInstance, $method], $matches);
             }
         }
-        throw new Exception('Route not found');
+        throw new NotFoundException();
     }
 
     public function run()
     {
-        $this->dispatch($this->request);
+        try {
+            $this->dispatch($this->request);
+        } catch (Exception $e) {
+            $handler = new ExceptionHandler();
+            $handler->handle($e);
+        }
     }
 }
