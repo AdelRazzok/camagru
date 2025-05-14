@@ -1,6 +1,11 @@
 <?php
 
 spl_autoload_register(function ($class) {
-    $class = str_replace('\\', DIRECTORY_SEPARATOR, $class);
-    require_once __DIR__ . DIRECTORY_SEPARATOR . $class . '.php';
+    $file = str_replace('\\', DIRECTORY_SEPARATOR, $class) . '.php';
+
+    if (file_exists($file)) {
+        require $file;
+        return true;
+    }
+    return false;
 });
