@@ -1,3 +1,5 @@
+<?php $fullVerificationURL = getenv('BASE_URL') . $verificationLink; ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -79,10 +81,12 @@
             <h2>Hey <?= htmlspecialchars($username) ?>,</h2>
             <p>We're so excited to have you on board. To get started and activate your account, just confirm your email address by clicking the button below:</p>
             <p style="text-align: center;">
-                <a href="<?= htmlspecialchars($verificationLink) ?>" class="button">Confirm My Email</a>
+                <a href="<?= htmlspecialchars($fullVerificationURL) ?>" class="button">Confirm My Email</a>
             </p>
             <p>If the button doesn't work, no worries, just copy and paste this link into your browser:</p>
-            <p style="word-break: break-all;"><a href="<?= htmlspecialchars($verificationLink) ?>"><?= htmlspecialchars($verificationLink) ?></a></p>
+            <p style="word-break: break-all;">
+                <a href="<?= htmlspecialchars($fullVerificationURL) ?>"><?= htmlspecialchars($fullVerificationURL) ?></a>
+            </p>
             <p>This link will expire in <strong>24 hours</strong>, so be sure to use it soon!</p>
             <p>If you didn't create an account with us, feel free to ignore this email.</p>
         </div>

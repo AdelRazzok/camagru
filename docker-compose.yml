@@ -13,6 +13,7 @@ services:
       - "8000:80"
     depends_on:
       - postgres
+      - mailcatcher
     volumes:
       - ./php-apache/app:/var/www/html
     restart: on-failure
@@ -31,6 +32,16 @@ services:
       - "5432:5432"
     volumes:
       - database:/var/lib/postgresql/data
+    restart: on-failure
+
+  mailcatcher:
+    container_name: mailcatcher
+    image: dockage/mailcatcher:0.9
+    networks:
+      - camagru
+    ports:
+      - "1080:1080"
+      - "1025:1025"
     restart: on-failure
 
 volumes:
