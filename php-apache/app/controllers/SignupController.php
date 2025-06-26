@@ -4,7 +4,6 @@ namespace controllers;
 
 use http\Response;
 use database\Postgresql;
-use database\Sqlite;
 use models\enums\TokenType;
 use repositories\SQLUserRepository;
 use repositories\SQLTokenRepository;
@@ -20,11 +19,10 @@ class SignupController
 
     public function __construct()
     {
-        $db = new Sqlite(dirname(__DIR__) . '/database/SQLite/camagru.db');
-        // $db = new Postgresql(
-        //     getenv('POSTGRES_HOST'),
-        //     (int)getenv('POSTGRES_PORT')
-        // );
+        $db = new Postgresql(
+            getenv('POSTGRES_HOST'),
+            (int)getenv('POSTGRES_PORT')
+        );
 
         $userRepository = new SQLUserRepository($db->getConnection());
         $tokenRepository = new SQLTokenRepository($db->getConnection());

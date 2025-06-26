@@ -4,7 +4,6 @@ namespace controllers;
 
 use http\Response;
 use database\Postgresql;
-use database\Sqlite;
 use repositories\SQLUserRepository;
 use services\UserService;
 
@@ -14,11 +13,10 @@ class LoginController
 
     public function __construct()
     {
-        $db = new Sqlite(dirname(__DIR__) . '/database/SQLite/camagru.db');
-        // $db = new Postgresql(
-        //     getenv('POSTGRES_HOST'),
-        //     (int)getenv('POSTGRES_PORT')
-        // );
+        $db = new Postgresql(
+            getenv('POSTGRES_HOST'),
+            (int)getenv('POSTGRES_PORT')
+        );
 
         $userRepository = new SQLUserRepository($db->getConnection());
         $this->userService = new UserService($userRepository);
