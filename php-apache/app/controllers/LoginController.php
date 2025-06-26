@@ -4,12 +4,14 @@ namespace controllers;
 
 use http\Response;
 use database\Postgresql;
+use http\SessionManager;
 use repositories\SQLUserRepository;
 use services\UserService;
 
 class LoginController
 {
     private UserService $userService;
+    private SessionManager $session;
 
     public function __construct()
     {
@@ -20,16 +22,15 @@ class LoginController
 
         $userRepository = new SQLUserRepository($db->getConnection());
         $this->userService = new UserService($userRepository);
+        $this->session = SessionManager::getInstance();
     }
 
     public function index()
     {
         $title = 'Camagru - Login';
-        $success = $_SESSION['success'] ?? [];
-        $error = $_SESSION['error'] ?? [];
-        $old = $_SESSION['old'] ?? [];
-
-        unset($_SESSION['success'], $_SESSION['error'], $_SESSION['old']);
+        $success = $this->session->getFlash('success', []);
+        $error = $this->session->getFlash('error', []);
+        $old = $this->session->getFlash('old', []);
 
         require_once dirname(__DIR__) . '/views/login/index.php';
     }
@@ -39,10 +40,10 @@ class LoginController
         $result = $this->userService->authenticateUser($_POST['username'], $_POST['password']);
 
         if (!$result['success']) {
-            $_SESSION['error'] = $result['error'];
-            $_SESSION['old'] = [
+            $this->session->flash('error', $result['error']);
+            $this->session->flash('old', [
                 'username' => $_POST['username']
-            ];
+            ]);
 
             $response = new Response(Response::HTTP_SEE_OTHER);
             $response->addHeader('Location', '/login');
@@ -50,7 +51,7 @@ class LoginController
             exit;
         }
 
-        $_SESSION['user'] = $result['user'];
+        $this->session->set('user', $result['user']);
 
         $response = new Response(Response::HTTP_SEE_OTHER);
         $response->addHeader('Location', '/');
@@ -60,8 +61,7 @@ class LoginController
 
     public function logout()
     {
-        unset($_SESSION['user']);
-        session_destroy();
+        $this->session->destroy();
 
         $response = new Response(Response::HTTP_SEE_OTHER);
         $response->addHeader('Location', '/');

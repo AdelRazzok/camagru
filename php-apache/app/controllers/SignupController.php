@@ -3,6 +3,7 @@
 namespace controllers;
 
 use http\Response;
+use http\SessionManager;
 use database\Postgresql;
 use models\enums\TokenType;
 use repositories\SQLUserRepository;
@@ -16,6 +17,7 @@ class SignupController
     private UserService $userService;
     private TokenService $tokenService;
     private EmailService $emailService;
+    private SessionManager $session;
 
     public function __construct()
     {
@@ -29,15 +31,14 @@ class SignupController
         $this->userService = new UserService($userRepository);
         $this->tokenService = new TokenService($tokenRepository);
         $this->emailService = new EmailService();
+        $this->session = SessionManager::getInstance();
     }
 
     public function index()
     {
         $title = 'Camagru - Sign up';
-        $errors = $_SESSION['errors'] ?? [];
-        $old = $_SESSION['old'] ?? [];
-
-        unset($_SESSION['errors'], $_SESSION['old']);
+        $errors = $this->session->getFlash('errors', []);
+        $old = $this->session->getFlash('old', []);
 
         require_once dirname(__DIR__) . '/views/signup/index.php';
     }
@@ -51,8 +52,8 @@ class SignupController
         );
 
         if (!$userResult['success']) {
-            $_SESSION['errors'] = $userResult['errors'];
-            $_SESSION['old'] = $userResult['data'];
+            $this->session->flash('errors', $userResult['errors']);
+            $this->session->flash('old', $userResult['data']);
 
             $response = new Response(Response::HTTP_SEE_OTHER);
             $response->addHeader('Location', '/signup');
@@ -72,7 +73,7 @@ class SignupController
                 $tokenResult['token']->getToken()
             );
 
-            $_SESSION['success'] = $tokenResult['message'];
+            $this->session->flash('success', $tokenResult['message']);
         }
 
         $response = new Response(Response::HTTP_SEE_OTHER);

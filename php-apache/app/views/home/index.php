@@ -1,9 +1,17 @@
-<?php require_once dirname(__DIR__) . '/layouts/header.php'; ?>
+<?php
+
+use http\SessionManager;
+
+$session = SessionManager::getInstance();
+
+require_once dirname(__DIR__) . '/layouts/header.php';
+
+?>
 
 <div class="flex justify-between items-center p-4 shadow-md">
     <h1 class="text-2xl playwrite-be-vlg-400">Camagru</h1>
 
-    <?php if (isset($_SESSION['user'])): ?>
+    <?php if ($session->has('user')): ?>
         <a href="/logout" class="text-xl"><i class="fa-solid fa-power-off"></i></a>
     <?php else: ?>
         <div>

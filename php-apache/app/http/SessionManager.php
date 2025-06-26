@@ -1,7 +1,10 @@
 <?php
 
+namespace http;
+
 class SessionManager
 {
+    private static $instance = null;
     protected $lifetime = 1 * 24 * 3600;
 
     public function __construct()
@@ -13,6 +16,14 @@ class SessionManager
             'httponly' => true,
             'samesite' => 'Lax'
         ]);
+    }
+
+    public static function getInstance(): SessionManager
+    {
+        if (self::$instance === null) {
+            self::$instance = new self();
+        }
+        return self::$instance;
     }
 
     public function start(): void
@@ -57,5 +68,32 @@ class SessionManager
     public function has(string $key): bool
     {
         return isset($_SESSION[$key]);
+    }
+
+    public function remove(string $key): void
+    {
+        if (isset($_SESSION[$key])) {
+            unset($_SESSION[$key]);
+        }
+    }
+
+    public function flash(string $key, $value): void
+    {
+        $_SESSION['flash'][$key] = $value;
+    }
+
+    public function getFlash(string $key, $default = null)
+    {
+        if (isset($_SESSION['flash'][$key])) {
+            $value = $_SESSION['flash'][$key];
+            unset($_SESSION['flash'][$key]);
+            return $value;
+        }
+        return $default;
+    }
+
+    public function clearFlash(): void
+    {
+        unset($_SESSION['flash']);
     }
 }

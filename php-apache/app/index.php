@@ -4,12 +4,15 @@ require_once __DIR__ . '/autoload.php';
 
 use http\Router;
 use http\AuthMiddleware;
+use http\SessionManager;
 use controllers\HomeController;
 use controllers\LoginController;
 use controllers\SignupController;
 
 date_default_timezone_set('Europe/Paris');
-session_start();
+
+$session = SessionManager::getInstance();
+$session->start();
 
 $router = new Router();
 

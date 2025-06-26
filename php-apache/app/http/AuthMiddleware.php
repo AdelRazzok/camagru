@@ -7,9 +7,16 @@ use http\Response;
 
 class AuthMiddleware
 {
+    private SessionManager $session;
+
+    public function __construct()
+    {
+        $this->session = SessionManager::getInstance();
+    }
+
     public function handle(Request $request, callable $next)
     {
-        if (!isset($_SESSION['user'])) {
+        if (!$this->session->has('user')) {
             $response = new Response(Response::HTTP_SEE_OTHER);
             $response->addHeader('Location', '/');
             $response->send();
