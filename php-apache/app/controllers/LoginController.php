@@ -51,6 +51,18 @@ class LoginController
             exit;
         }
 
+        if (!$result['user']->isEmailVerified()) {
+            $this->session->flash('verification_needed', true);
+            $this->session->flash('old', [
+                'username' => $_POST['username']
+            ]);
+
+            $response = new Response(Response::HTTP_SEE_OTHER);
+            $response->addHeader('Location', '/login');
+            $response->send();
+            exit;
+        }
+
         $this->session->set('user', $result['user']);
 
         $response = new Response(Response::HTTP_SEE_OTHER);
