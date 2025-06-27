@@ -3,10 +3,11 @@
 namespace repositories;
 
 use InvalidArgumentException;
+use PDO;
+use DateTime;
 use models\Token;
 use models\enums\TokenType;
 use repositories\interfaces\TokenRepositoryInterface;
-use PDO;
 
 class SQLTokenRepository implements TokenRepositoryInterface
 {
@@ -102,12 +103,13 @@ class SQLTokenRepository implements TokenRepositoryInterface
 
     private function mapToToken(array $tokenData): Token
     {
+
         $token = (new Token())
             ->setId($tokenData['id'])
             ->setUserId($tokenData['user_id'])
             ->setToken($tokenData['token'])
-            ->setType($tokenData['type'])
-            ->setExpiresAt($tokenData['expires_at']);
+            ->setType(TokenType::from($tokenData['type']))
+            ->setExpiresAt(new DateTime($tokenData['expires_at']));
         return $token;
     }
 }
