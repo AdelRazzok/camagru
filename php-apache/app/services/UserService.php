@@ -60,8 +60,6 @@ class UserService implements UserServiceInterface
             ];
         }
 
-        // TODO: Check if the user has a verified email
-
         return [
             'success' => true,
             'user' => $user
