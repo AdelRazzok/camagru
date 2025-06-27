@@ -1,11 +1,6 @@
 <?php
-
-use http\SessionManager;
-
-$session = SessionManager::getInstance();
-
+$session = http\SessionManager::getInstance();
 require_once dirname(__DIR__) . '/layouts/header.php';
-
 ?>
 
 <div class="flex justify-between items-center p-4 shadow-md">
