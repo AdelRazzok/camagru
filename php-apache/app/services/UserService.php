@@ -67,4 +67,30 @@ class UserService implements UserServiceInterface
             'user' => $user
         ];
     }
+
+    public function verifyUserEmail(int $userId): array
+    {
+        $user = $this->userRepository->findById($userId);
+
+        if (!$user) {
+            return [
+                'success' => false,
+                'message' => 'User not found.'
+            ];
+        }
+
+        if ($user->isEmailVerified()) {
+            return [
+                'success' => true,
+                'message' => 'User email already verified.'
+            ];
+        }
+
+        $user->setEmailVerified(true);
+        $this->userRepository->save($user);
+        return [
+            'success' => true,
+            'message' => 'User email verified successfully.'
+        ];
+    }
 }

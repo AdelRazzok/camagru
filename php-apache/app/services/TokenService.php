@@ -50,7 +50,10 @@ class TokenService implements TokenServiceInterface
         return [
             'success' => true,
             'userId' => $tokenEntity->getUserId(),
-            'token' => $tokenEntity
+            'token' => $tokenEntity,
+            'message' => 'Token is valid.'
         ];
     }
+
+    public function invalidateToken(string $token, TokenType $type) {}
 }

@@ -8,6 +8,7 @@ use http\SessionManager;
 use controllers\HomeController;
 use controllers\LoginController;
 use controllers\SignupController;
+use controllers\VerifyController;
 
 date_default_timezone_set('Europe/Paris');
 
@@ -23,6 +24,8 @@ $router->post('/login', [LoginController::class, 'authenticate']);
 
 $router->get('/signup', [SignupController::class, 'index']);
 $router->post('/signup', [SignupController::class, 'store']);
+
+$router->get('/verify-account', [VerifyController::class, 'verifyAccount']);
 
 // $router->get('/profile', [ProfileController::class, 'index'], [
 //     'middlewares' => [AuthMiddleware::class]
