@@ -3,7 +3,6 @@
 namespace services;
 
 use services\interfaces\EmailServiceInterface;
-use services\LogService;
 use Exception;
 
 class EmailService implements EmailServiceInterface
@@ -12,7 +11,6 @@ class EmailService implements EmailServiceInterface
     private string $fromName;
     private string $baseUrl;
     private string $templatesPath;
-    private LogService $logService;
 
     public function __construct()
     {
@@ -20,7 +18,6 @@ class EmailService implements EmailServiceInterface
         $this->fromName = getenv('MAIL_FROM_NAME');
         $this->baseUrl = getenv('APP_URL');
         $this->templatesPath = dirname(__DIR__) . '/views/emails/';
-        $this->logService = new LogService();
     }
 
     public function send(string $to, string $subject, string $template, array $data = []): bool
@@ -45,20 +42,6 @@ class EmailService implements EmailServiceInterface
         ];
 
         $result = mail($to, $subject, $body, implode("\r\n", $headers));
-
-        if (!$result) {
-            $errorInfo = error_get_last() ? error_get_last()['message'] : 'Unknown.';
-
-            $this->logService->error(
-                "Fail to send email - Recipient: {$to}, Subject: {$subject}, Error: {$errorInfo}",
-                'email'
-            );
-        } else {
-            $this->logService->info(
-                "Email successfully sent - Recipient: {$to}, Subject: {$subject}",
-                'email'
-            );
-        }
 
         return $result;
     }
