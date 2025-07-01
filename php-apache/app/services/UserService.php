@@ -3,10 +3,9 @@
 namespace services;
 
 use models\User;
-use services\interfaces\UserServiceInterface;
 use repositories\interfaces\UserRepositoryInterface;
 
-class UserService implements UserServiceInterface
+class UserService
 {
     private UserRepositoryInterface $userRepository;
 
@@ -89,6 +88,29 @@ class UserService implements UserServiceInterface
         return [
             'success' => true,
             'message' => 'User email verified successfully.'
+        ];
+    }
+
+    public function findByEmailOrFail(string $email): array
+    {
+        if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            return [
+                'success' => false,
+                'message' => 'Please provide a valid email address.'
+            ];
+        }
+
+        $user = $this->userRepository->findByEmail($email);
+        if (!$user) {
+            return [
+                'success' => false,
+                'message' => 'User not found.'
+            ];
+        }
+
+        return [
+            'success' => true,
+            'user' => $user
         ];
     }
 }

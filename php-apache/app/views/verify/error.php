@@ -8,16 +8,21 @@
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
         </svg>
 
-        <h3 class="mt-4 text-lg font-medium text-gray-900">Error.</h3>
+        <h3 class="mt-3 text-lg font-medium text-gray-900">Error.</h3>
 
-        <p class="mt-1 text-gray-500"><?= htmlspecialchars($error) ?></p>
+        <p class="mt-2 text-gray-500"><?= htmlspecialchars($error) ?></p>
       </div>
 
       <div class="mt-8 space-y-8">
         <?php if ($isExpired): ?>
-          <p class="text-sm text-gray-500 text-center">Vous pouvez demander un nouveau lien de vérification.</p>
+          <p class="text-gray-500 text-center">
+            <a href="/resend-verification" class="text-blue-600 hover:underline">
+              Click here
+            </a>
+            to resend the verification email.
+          </p>
           <div class="text-center">
-            <a href="/login" class="bg-sky-500 text-white px-6 py-2 rounded focus:ring-2 focus:ring-blue-300">Login</a>
+            <a href="/login" class="bg-sky-500 text-white px-4 py-2 rounded focus:ring-2 focus:ring-blue-300">Login</a>
           </div>
         <?php else: ?>
           <div class="text-center space-y-4">
@@ -29,7 +34,7 @@
         <?php endif; ?>
 
         <div class="text-center">
-          <a href="/" class="text-blue-600 hover:underline">Return to home page</a>
+          <a href="/" class="text-sm text-blue-600 hover:underline">Return to home page</a>
         </div>
       </div>
     </div>

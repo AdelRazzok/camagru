@@ -9,20 +9,20 @@
         </svg>
 
         <?php if (isset($alreadyVerified) && $alreadyVerified): ?>
-          <h3 class="mt-4 text-lg font-medium text-gray-900">Account already verified.</h3>
-          <p class="mt-1 text-gray-500">Your account has already been verified.</p>
+          <h3 class="mt-3 text-lg font-medium text-gray-900">Account already verified.</h3>
+          <p class="mt-2 text-gray-500">Your account has already been verified.</p>
         <?php else: ?>
-          <h3 class="mt-4 text-lg font-medium text-gray-900">Account verified successfully.</h3>
-          <p class="mt-1 text-gray-500">Your email has been verified.</p>
+          <h3 class="mt-3 text-lg font-medium text-gray-900">Account verified successfully.</h3>
+          <p class="mt-2 text-gray-500">Your email has been verified.</p>
         <?php endif; ?>
       </div>
 
       <div class="mt-8 text-center">
-        <a href="/login" class="bg-sky-500 text-white px-6 py-2 rounded focus:ring-2 focus:ring-blue-300">Login</a>
+        <a href="/login" class="bg-sky-500 text-white mt-2 py-2 px-4 rounded hover:bg-sky-600 transition duration-200">Login</a>
       </div>
 
-      <div class="mt-6 text-center">
-        <a href="/" class="text-sky-500 hover:underline">Return to home</a>
+      <div class="mt-8 text-center">
+        <a href="/" class="text-sm text-blue-600 hover:underline">Return to home</a>
       </div>
     </div>
   </div>

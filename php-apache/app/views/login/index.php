@@ -48,7 +48,7 @@ require_once dirname(__DIR__) . '/layouts/header.php';
                         <p class="mt-1 text-sm text-amber-700">Please verify your account before logging in. We sent a verification link to your email address.</p>
                         <p class="mt-2 text-sm text-amber-700">
                             Didn't receive the email?
-                            <a href="/resend-verification?username=<?= htmlspecialchars($session->getFlash('username')) ?>" class="font-medium text-amber-700 underline hover:text-amber-600">
+                            <a href="/resend-verification" class="font-medium text-amber-700 underline hover:text-amber-600">
                                 Resend verification email
                             </a>
                         </p>

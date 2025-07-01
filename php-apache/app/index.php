@@ -27,6 +27,9 @@ $router->post('/signup', [SignupController::class, 'store']);
 
 $router->get('/verify-account', [VerifyController::class, 'verifyAccount']);
 
+$router->get('/resend-verification', [VerifyController::class, 'showResendVerificationForm']);
+$router->post('/resend-verification', [VerifyController::class, 'resendVerification']);
+
 // $router->get('/profile', [ProfileController::class, 'index'], [
 //     'middlewares' => [AuthMiddleware::class]
 // ]);

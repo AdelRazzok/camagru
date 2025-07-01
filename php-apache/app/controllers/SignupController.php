@@ -73,7 +73,7 @@ class SignupController
                 $tokenResult['token']->getToken()
             );
 
-            $this->session->flash('success', $tokenResult['message']);
+            $this->session->flash('success', 'Account created successfully! Please check your inbox to activate it.');
         }
 
         $response = new Response(Response::HTTP_SEE_OTHER);

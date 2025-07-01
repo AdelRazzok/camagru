@@ -29,7 +29,7 @@ class TokenService
         return [
             'success' => true,
             'token' => $token,
-            'message' => 'Account created successfully. Please check your inbox to activate it.'
+            'message' => 'Token generated successfully.'
         ];
     }
 
