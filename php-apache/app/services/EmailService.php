@@ -2,10 +2,9 @@
 
 namespace services;
 
-use services\interfaces\EmailServiceInterface;
 use Exception;
 
-class EmailService implements EmailServiceInterface
+class EmailService
 {
     private string $fromEmail;
     private string $fromName;

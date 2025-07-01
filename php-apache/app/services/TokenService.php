@@ -2,13 +2,12 @@
 
 namespace services;
 
-use services\interfaces\TokenServiceInterface;
 use repositories\interfaces\TokenRepositoryInterface;
 use models\enums\TokenType;
 use models\Token;
 use DateTime;
 
-class TokenService implements TokenServiceInterface
+class TokenService
 {
     private TokenRepositoryInterface $tokenRepository;
 
