@@ -1,5 +1,4 @@
 <?php
-$session = http\SessionManager::getInstance();
 require_once dirname(__DIR__) . '/layouts/header.php';
 ?>
 
