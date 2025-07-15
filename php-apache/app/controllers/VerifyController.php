@@ -78,9 +78,9 @@ class VerifyController
     $userResult = $this->userService->findByEmailOrFail($email);
     $userNotFound = $userResult['success'] === false && $userResult['message'] === 'User not found.';
 
-    if ($userNotFound) {
-      $this->session->flash('success', 'If your account exists, you will receive a verification email shortly.');
+    $this->session->flash('success', 'If your account exists, you will receive a verification email shortly.');
 
+    if ($userNotFound) {
       $response = new Response(Response::HTTP_SEE_OTHER);
       $response->addHeader('Location', '/login');
       $response->send();
@@ -107,8 +107,6 @@ class VerifyController
         $userResult['user']->getUsername(),
         $tokenResult['token']->getToken()
       );
-
-      $this->session->flash('success', 'If your account exists, you will receive a verification email shortly.');
     }
 
     $response = new Response(Response::HTTP_SEE_OTHER);
