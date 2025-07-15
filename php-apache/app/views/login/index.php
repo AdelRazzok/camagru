@@ -75,7 +75,7 @@ require_once dirname(__DIR__) . '/layouts/header.php';
         </form>
 
         <div class="text-center mt-4">
-            <a href="/reset-password" class="text-sm text-blue-600 hover:underline">Forgot password?</a>
+            <a href="/forgot-password" class="text-sm text-blue-600 hover:underline">Forgot password?</a>
         </div>
 
         <div class="text-center mt-6 text-sm text-gray-600">

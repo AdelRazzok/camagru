@@ -9,6 +9,7 @@ use controllers\HomeController;
 use controllers\LoginController;
 use controllers\SignupController;
 use controllers\VerifyController;
+use controllers\PasswordResetController;
 
 date_default_timezone_set('Europe/Paris');
 
@@ -26,9 +27,13 @@ $router->get('/signup', [SignupController::class, 'index']);
 $router->post('/signup', [SignupController::class, 'store']);
 
 $router->get('/verify-account', [VerifyController::class, 'verifyAccount']);
-
 $router->get('/resend-verification', [VerifyController::class, 'showResendVerificationForm']);
 $router->post('/resend-verification', [VerifyController::class, 'resendVerification']);
+
+$router->get('/forgot-password', [PasswordResetController::class, 'showForm']);
+$router->post('/forgot-password', [PasswordResetController::class, 'sendResetLink']);
+$router->get('/reset-password', [PasswordResetController::class, 'showResetForm']);
+$router->post('/reset-password', [PasswordResetController::class, 'resetPassword']);
 
 // $router->get('/profile', [ProfileController::class, 'index'], [
 //     'middlewares' => [AuthMiddleware::class]

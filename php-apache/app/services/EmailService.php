@@ -56,6 +56,16 @@ class EmailService
         return $this->send($to, $subject, 'verification', $data);
     }
 
-    public function sendPasswordReset() {}
+    public function sendPasswordResetLink(string $to, string $username, string $token): bool
+    {
+        $subject = 'Password Reset Request';
+
+        $data = [
+            'username' => $username,
+            'resetLink' => $this->baseUrl . 'reset-password?token=' . $token
+        ];
+        return $this->send($to, $subject, 'reset_password', $data);
+    }
+
     public function sendCommentNotification() {}
 }
