@@ -1,8 +1,6 @@
 <?php
 
-use http\SessionManager;
-
-$session = SessionManager::getInstance();
+$session = \http\SessionManager::getInstance();
 
 if ($session->has('user')) : ?>
     <nav class="sticky bottom-0 w-full bg-sky-400 px-3 py-2">
