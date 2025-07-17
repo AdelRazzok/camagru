@@ -14,6 +14,7 @@ use models\enums\TokenType;
 
 class PasswordResetController
 {
+  private SQLUserRepository $userRepository;
   private UserService $userService;
   private TokenService $tokenService;
   private EmailService $emailService;
@@ -26,9 +27,9 @@ class PasswordResetController
       (int)getenv('POSTGRES_PORT')
     );
 
-    $userRepository = new SQLUserRepository($db->getConnection());
+    $this->userRepository = new SQLUserRepository($db->getConnection());
     $tokenRepository = new SQLTokenRepository($db->getConnection());
-    $this->userService = new UserService($userRepository);
+    $this->userService = new UserService($this->userRepository);
     $this->tokenService = new TokenService($tokenRepository);
     $this->emailService = new EmailService();
     $this->session = SessionManager::getInstance();
@@ -83,5 +84,68 @@ class PasswordResetController
     $response = new Response(Response::HTTP_SEE_OTHER);
     $response->addHeader('Location', '/login');
     $response->send();
+  }
+
+  public function showResetForm()
+  {
+    if (!isset($_GET['token']) || empty($_GET['token'])) {
+      $error = 'Token is required for password reset.';
+      $isExpired = false;
+
+      require_once dirname(__DIR__) . '/views/password_reset/error.php';
+      exit;
+    }
+    $token = $_GET['token'];
+
+    $verifyTokenResult = $this->tokenService->verifyToken($token, TokenType::PasswordReset);
+
+    if (!$verifyTokenResult['success']) {
+      $error = $verifyTokenResult['message'] === 'Token expired.' ? 'Your verification link has expired.' : 'Invalid verification link.';
+      $isExpired = $verifyTokenResult['message'] === 'Token expired.';
+
+      require_once dirname(__DIR__) . '/views/password_reset/error.php';
+      exit;
+    }
+
+    $user = $this->userRepository->findById($verifyTokenResult['userId']);
+    if (!$user) {
+      $error = 'User not found.';
+      $isExpired = false;
+
+      require_once dirname(__DIR__) . '/views/password_reset/error.php';
+      exit;
+    }
+
+    $title = 'Camagru - Reset Password';
+    $error = $this->session->getFlash('error', '');
+    $userId = $user->getId();
+
+    require_once dirname(__DIR__) . '/views/password_reset/reset_form.php';
+  }
+
+  public function resetPassword()
+  {
+    $password = $_POST['password'] ?? '';
+    $passwordConfirmation = $_POST['password_confirmation'] ?? '';
+    $token = $_POST['token'] ?? '';
+    $userId = (int)$_POST['user_id'] ?? '';
+
+    $resetPasswordResult = $this->userService->resetPassword($userId, $password, $passwordConfirmation);
+
+    if ($resetPasswordResult['success']) {
+      $this->session->flash('success', $resetPasswordResult['message']);
+
+      $response = new Response(Response::HTTP_SEE_OTHER);
+      $response->addHeader('Location', '/login');
+      $response->send();
+      exit;
+    } else {
+      $this->session->flash('error', $resetPasswordResult['message']);
+
+      $response = new Response(Response::HTTP_SEE_OTHER);
+      $response->addHeader('Location', '/reset-password?token=' . $token);
+      $response->send();
+      exit;
+    }
   }
 }

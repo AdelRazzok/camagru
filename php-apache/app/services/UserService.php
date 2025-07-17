@@ -113,4 +113,45 @@ class UserService
             'user' => $user
         ];
     }
+
+    public function resetPassword(int $userId, string $password, string $passwordConfirmation): array
+    {
+        if (empty($password) || empty($passwordConfirmation)) {
+            return [
+                'success' => false,
+                'message' => 'Password and confirmation are required.'
+            ];
+        }
+
+        if ($password !== $passwordConfirmation) {
+            return [
+                'success' => false,
+                'message' => 'Passwords do not match.'
+            ];
+        }
+
+        $user = $this->userRepository->findById($userId);
+        if (!$user) {
+            return [
+                'success' => false,
+                'message' => 'User not found.'
+            ];
+        }
+
+        if (strlen($password) < 8) {
+            return [
+                'success' => false,
+                'message' => 'Password must be at least 8 characters long.'
+            ];
+        }
+
+        $user->setPassword($password);
+        $user->setHashedPassword(password_hash($password, PASSWORD_DEFAULT));
+        $this->userRepository->save($user);
+
+        return [
+            'success' => true,
+            'message' => 'Password reset successfully.'
+        ];
+    }
 }
