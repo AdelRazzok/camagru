@@ -65,6 +65,7 @@ class SQLTokenRepository implements TokenRepositoryInterface
                     SET user_id = :user_id,
                         token = :token,
                         type = :type,
+                        is_used = :is_used,
                         expires_at = :expires_at,
                         updated_at = :updated_at
                     WHERE id = :id'
@@ -72,8 +73,8 @@ class SQLTokenRepository implements TokenRepositoryInterface
             $stmt->bindValue(':id', $token->getId(), PDO::PARAM_INT);
         } else {
             $stmt = $this->conn->prepare(
-                'INSERT INTO tokens (user_id, token, type, expires_at, created_at, updated_at)
-                    VALUES (:user_id, :token, :type, :expires_at, :created_at, :updated_at)'
+                'INSERT INTO tokens (user_id, token, type, is_used, expires_at, created_at, updated_at)
+                    VALUES (:user_id, :token, :type, :is_used, :expires_at, :created_at, :updated_at)'
             );
             $stmt->bindValue(':created_at', $now);
         }
@@ -81,6 +82,7 @@ class SQLTokenRepository implements TokenRepositoryInterface
         $stmt->bindValue(':user_id', $token->getUserId(), PDO::PARAM_INT);
         $stmt->bindValue(':token', $token->getToken());
         $stmt->bindValue(':type', $token->getTypeValue());
+        $stmt->bindValue(':is_used', $token->isUsed(), PDO::PARAM_BOOL);
         $stmt->bindValue(':expires_at', $expiresAt);
         $stmt->bindValue(':updated_at', $now);
         $stmt->execute();
@@ -109,6 +111,7 @@ class SQLTokenRepository implements TokenRepositoryInterface
             ->setUserId($tokenData['user_id'])
             ->setToken($tokenData['token'])
             ->setType(TokenType::from($tokenData['type']))
+            ->setIsUsed($tokenData['is_used'])
             ->setExpiresAt(new DateTime($tokenData['expires_at']));
         return $token;
     }

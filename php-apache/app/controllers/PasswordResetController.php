@@ -100,7 +100,7 @@ class PasswordResetController
     $verifyTokenResult = $this->tokenService->verifyToken($token, TokenType::PasswordReset);
 
     if (!$verifyTokenResult['success']) {
-      $error = $verifyTokenResult['message'] === 'Token expired.' ? 'Your verification link has expired.' : 'Invalid verification link.';
+      $error = $verifyTokenResult['user_friendly_message'] ?? 'Invalid reset password link.';
       $isExpired = $verifyTokenResult['message'] === 'Token expired.';
 
       require_once dirname(__DIR__) . '/views/password_reset/error.php';
@@ -132,14 +132,7 @@ class PasswordResetController
 
     $resetPasswordResult = $this->userService->resetPassword($userId, $password, $passwordConfirmation);
 
-    if ($resetPasswordResult['success']) {
-      $this->session->flash('success', $resetPasswordResult['message']);
-
-      $response = new Response(Response::HTTP_SEE_OTHER);
-      $response->addHeader('Location', '/login');
-      $response->send();
-      exit;
-    } else {
+    if (!$resetPasswordResult['success']) {
       $this->session->flash('error', $resetPasswordResult['message']);
 
       $response = new Response(Response::HTTP_SEE_OTHER);
@@ -147,5 +140,13 @@ class PasswordResetController
       $response->send();
       exit;
     }
+
+    $this->tokenService->invalidateToken($token, TokenType::PasswordReset);
+
+    $this->session->flash('success', $resetPasswordResult['message']);
+
+    $response = new Response(Response::HTTP_SEE_OTHER);
+    $response->addHeader('Location', '/login');
+    $response->send();
   }
 }

@@ -14,103 +14,102 @@ use services\UserService;
 
 class VerifyController
 {
-  private TokenService $tokenService;
-  private UserService $userService;
-  private EmailService $emailService;
-  private SessionManager $session;
+    private TokenService $tokenService;
+    private UserService $userService;
+    private EmailService $emailService;
+    private SessionManager $session;
 
-  public function __construct()
-  {
-    $db = new Postgresql(
-      getenv('POSTGRES_HOST'),
-      (int)getenv('POSTGRES_PORT')
-    );
+    public function __construct()
+    {
+        $db = new Postgresql(
+            getenv('POSTGRES_HOST'),
+            (int)getenv('POSTGRES_PORT')
+        );
 
-    $tokenRepository = new SQLTokenRepository($db->getConnection());
-    $userRepository = new SQLUserRepository($db->getConnection());
-    $this->tokenService = new TokenService($tokenRepository);
-    $this->userService = new UserService($userRepository);
-    $this->emailService = new EmailService();
-    $this->session = SessionManager::getInstance();
-  }
-
-  public function verifyAccount()
-  {
-    if (!isset($_GET['token']) || empty($_GET['token'])) {
-      $error = 'Token is required for account verification.';
-      $isExpired = false;
-
-      require_once dirname(__DIR__) . '/views/verify/error.php';
-      exit;
-    }
-    $token = $_GET['token'];
-
-    $verifyTokenResult = $this->tokenService->verifyToken($token, TokenType::EmailVerification);
-
-    if (!$verifyTokenResult['success']) {
-      $error = $verifyTokenResult['message'] === 'Token expired.' ? 'Your verification link has expired.' : 'Invalid verification link.';
-      $isExpired = $verifyTokenResult['message'] === 'Token expired.';
-
-      require_once dirname(__DIR__) . '/views/verify/error.php';
-      exit;
+        $tokenRepository = new SQLTokenRepository($db->getConnection());
+        $userRepository = new SQLUserRepository($db->getConnection());
+        $this->tokenService = new TokenService($tokenRepository);
+        $this->userService = new UserService($userRepository);
+        $this->emailService = new EmailService();
+        $this->session = SessionManager::getInstance();
     }
 
-    $verifyUserEmailResult = $this->userService->verifyUserEmail($verifyTokenResult['userId']);
-    $alreadyVerified = $verifyUserEmailResult['message'] === 'User email already verified.';
+    public function verifyAccount()
+    {
+        if (!isset($_GET['token']) || empty($_GET['token'])) {
+            $error = 'Token is required for account verification.';
+            $isExpired = false;
 
-    $this->tokenService->invalidateToken($token, TokenType::EmailVerification);
+            require_once dirname(__DIR__) . '/views/verify/error.php';
+            exit;
+        }
+        $token = $_GET['token'];
 
-    require_once dirname(__DIR__) . '/views/verify/success.php';
-  }
+        $verifyTokenResult = $this->tokenService->verifyToken($token, TokenType::EmailVerification);
 
-  public function showResendVerificationForm()
-  {
-    $title = 'Camagru - Resend Verification';
-    $error = $this->session->getFlash('error', '');
+        $alreadyVerified = $verifyTokenResult['message'] === 'Token already used.';
 
-    require_once dirname(__DIR__) . '/views/verify/resend_form.php';
-  }
+        if (!$verifyTokenResult['success'] && !$alreadyVerified) {
+            $error = $verifyTokenResult['user_friendly_message'] ?? 'Invalid verification link.';
+            $isExpired = $verifyTokenResult['message'] === 'Token expired.';
 
-  public function resendVerification()
-  {
-    $email = $_POST['email'] ?? '';
+            require_once dirname(__DIR__) . '/views/verify/error.php';
+            exit;
+        }
 
-    $userResult = $this->userService->findByEmailOrFail($email);
-    $userNotFound = $userResult['success'] === false && $userResult['message'] === 'User not found.';
+        $test = $this->tokenService->invalidateToken($token, TokenType::EmailVerification);
 
-    $this->session->flash('success', 'If your account exists, you will receive a verification email shortly.');
-
-    if ($userNotFound) {
-      $response = new Response(Response::HTTP_SEE_OTHER);
-      $response->addHeader('Location', '/login');
-      $response->send();
-      exit;
+        require_once dirname(__DIR__) . '/views/verify/success.php';
     }
 
-    if (!$userResult['success']) {
-      $this->session->flash('error', $userResult['message']);
+    public function showResendVerificationForm()
+    {
+        $title = 'Camagru - Resend Verification';
+        $error = $this->session->getFlash('error', '');
 
-      $response = new Response(Response::HTTP_SEE_OTHER);
-      $response->addHeader('Location', '/resend-verification');
-      $response->send();
-      exit;
+        require_once dirname(__DIR__) . '/views/verify/resend_form.php';
     }
 
-    $tokenResult = $this->tokenService->generateToken(
-      $userResult['user']->getId(),
-      TokenType::EmailVerification
-    );
+    public function resendVerification()
+    {
+        $email = $_POST['email'] ?? '';
 
-    if ($tokenResult['success']) {
-      $this->emailService->sendVerification(
-        $userResult['user']->getEmail(),
-        $userResult['user']->getUsername(),
-        $tokenResult['token']->getToken()
-      );
+        $userResult = $this->userService->findByEmailOrFail($email);
+        $userNotFound = $userResult['success'] === false && $userResult['message'] === 'User not found.';
+
+        $this->session->flash('success', 'If your account exists, you will receive a verification email shortly.');
+
+        if ($userNotFound) {
+            $response = new Response(Response::HTTP_SEE_OTHER);
+            $response->addHeader('Location', '/login');
+            $response->send();
+            exit;
+        }
+
+        if (!$userResult['success']) {
+            $this->session->flash('error', $userResult['message']);
+
+            $response = new Response(Response::HTTP_SEE_OTHER);
+            $response->addHeader('Location', '/resend-verification');
+            $response->send();
+            exit;
+        }
+
+        $tokenResult = $this->tokenService->generateToken(
+            $userResult['user']->getId(),
+            TokenType::EmailVerification
+        );
+
+        if ($tokenResult['success']) {
+            $this->emailService->sendVerification(
+                $userResult['user']->getEmail(),
+                $userResult['user']->getUsername(),
+                $tokenResult['token']->getToken()
+            );
+        }
+
+        $response = new Response(Response::HTTP_SEE_OTHER);
+        $response->addHeader('Location', '/login');
+        $response->send();
     }
-
-    $response = new Response(Response::HTTP_SEE_OTHER);
-    $response->addHeader('Location', '/login');
-    $response->send();
-  }
 }

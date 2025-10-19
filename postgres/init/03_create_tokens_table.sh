@@ -8,6 +8,7 @@ psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$DB_NAME" <<-EOSQL
     user_id     INTEGER NOT NULL,
     token       TEXT NOT NULL,
     type        TEXT NOT NULL,
+    is_used     BOOLEAN NOT NULL DEFAULT FALSE,
     expires_at  TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     created_at  TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     updated_at  TIMESTAMP WITHOUT TIME ZONE NOT NULL,

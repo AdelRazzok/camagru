@@ -12,6 +12,7 @@ class Token extends Model
     protected int $user_id;
     protected string $token;
     protected TokenType $type;
+    protected bool $is_used;
     protected DateTime $expires_at;
 
     public function __construct()
@@ -66,6 +67,17 @@ class Token extends Model
     public function setType(TokenType $type): Token
     {
         $this->type = $type;
+        return $this;
+    }
+
+    public function isUsed(): bool
+    {
+        return $this->is_used;
+    }
+
+    public function setIsUsed(bool $is_used): Token
+    {
+        $this->is_used = $is_used;
         return $this;
     }
 

@@ -16,7 +16,7 @@
       <div class="mt-8 space-y-8">
         <?php if ($isExpired): ?>
           <p class="text-gray-500 text-center">
-            <a href="/resend-verification" class="text-blue-600 hover:underline">
+            <a href="/forgot-password" class="text-blue-600 hover:underline">
               Click here
             </a>
             to resend the reset password link.
