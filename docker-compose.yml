@@ -17,7 +17,7 @@ services:
     volumes:
       - ./php-apache/app:/var/www/html
     restart: on-failure
-  
+
   postgres:
     container_name: postgres
     image: postgres
@@ -44,12 +44,23 @@ services:
       - "1025:1025"
     restart: on-failure
 
+  adminer:
+    container_name: adminer
+    image: adminer
+    networks:
+      - camagru
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+    restart: on-failure
+
 volumes:
   database:
     driver: local
     driver_opts:
       type: none
-      device: C:\Users\skurt\Desktop\camagru\database
+      device: /home/arazzok/Documents/camagru/database
       o: bind
 
 networks:

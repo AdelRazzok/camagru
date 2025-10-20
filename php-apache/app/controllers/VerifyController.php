@@ -57,7 +57,10 @@ class VerifyController
             exit;
         }
 
-        $test = $this->tokenService->invalidateToken($token, TokenType::EmailVerification);
+        if (!$alreadyVerified) {
+            $this->userService->verifyUserEmail($verifyTokenResult['userId']);
+        }
+        $this->tokenService->invalidateToken($token, TokenType::EmailVerification);
 
         require_once dirname(__DIR__) . '/views/verify/success.php';
     }

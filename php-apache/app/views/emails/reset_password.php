@@ -1,5 +1,3 @@
-<?php $fullResetURL = getenv('BASE_URL') . $resetLink; ?>
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -81,11 +79,11 @@
       <h2>Hey <?= htmlspecialchars($username) ?>,</h2>
       <p>We're so sorry to hear that you've forgotten your password. To reset it, please click the button below:</p>
       <p style="text-align: center;">
-        <a href="<?= htmlspecialchars($fullResetURL) ?>" class="button">Reset My Password</a>
+        <a href="<?= htmlspecialchars($resetLink) ?>" class="button">Reset My Password</a>
       </p>
       <p>If the button doesn't work, no worries, just copy and paste this link into your browser:</p>
       <p style="word-break: break-all;">
-        <a href="<?= htmlspecialchars($fullResetURL) ?>"><?= htmlspecialchars($fullResetURL) ?></a>
+        <a href="<?= htmlspecialchars($resetLink) ?>"><?= htmlspecialchars($resetLink) ?></a>
       </p>
       <p>This link will expire in <strong>24 hours</strong>, so be sure to use it soon!</p>
       <p>If you didn't ask for a password reset, feel free to ignore this email.</p>
