@@ -1,9 +1,70 @@
+/* ==============================
+    CONSTANTS
+============================== */
+
+const CANVAS_WIDTH = 800;
+const CANVAS_HEIGHT = 600;
+const STICKER_HANDLE_SIZE = 20;
+
+const stickers = [
+    'public/images/stickers/sticker_1.png',
+    'public/images/stickers/sticker_2.png',
+    'public/images/stickers/sticker_3.png',
+    'public/images/stickers/sticker_4.png',
+    'public/images/stickers/sticker_5.png',
+];
+
+/* ==============================
+    DOM ELEMENTS
+============================== */
+
 const tabButtons = document.querySelectorAll('.tab-button');
 const tabContents = document.querySelectorAll('.tab-content');
+
+const video = document.getElementById('webcam');
+const captureBtn = document.getElementById('capture-btn');
+const captureCanvas = document.getElementById('capture-canvas');
+const captureCtx = captureCanvas?.getContext('2d');
+
+const fileInput = document.getElementById('image');
+const uploadZone = document.getElementById('upload-zone');
+
+const canvas = document.getElementById('preview-canvas');
+const ctx = canvas?.getContext('2d');
+const stickerPreview = document.getElementById('sticker-preview');
+const stickerInfo = document.getElementById('sticker-info');
+const prevBtn = document.getElementById('prev-sticker');
+const nextBtn = document.getElementById('next-sticker');
+const changeImageBtn = document.getElementById('change-image');
+
+/* ==============================
+    STATE
+============================== */
+
+let stream = null;
+let currentStickerIndex = 0;
+let currentImage = null;
+let currentMode = null;
+
+let currentStickerX = 0;
+let currentStickerY = 0;
+let currentStickerScale = 1;
+let isDragging = false;
+let isResizing = false;
+let dragStartX = 0;
+let dragStartY = 0;
+
+/* ==============================
+    TAB MANAGEMENT
+============================== */
 
 tabButtons.forEach((button) => {
     button.addEventListener('click', () => {
         const tabName = button.dataset.tab;
+
+        if (stickerPreview && !stickerPreview.classList.contains('hidden')) {
+            hideStickerPreview(currentMode);
+        }
 
         tabButtons.forEach((btn) => {
             btn.classList.remove('text-sky-500', 'border-b-2', 'border-sky-500');
@@ -27,8 +88,9 @@ tabButtons.forEach((button) => {
     });
 });
 
-const video = document.getElementById('webcam');
-let stream = null;
+/* ==============================
+    CAMERA
+============================== */
 
 async function startCamera() {
     if (stream !== null) {
@@ -49,7 +111,6 @@ async function startCamera() {
             video.play();
         });
     } catch (error) {
-        console.error('Error accessing webcam:', error);
         showErrorToast('Not able to access the webcam.');
     }
 }
@@ -58,11 +119,35 @@ function stopCamera() {
     if (stream) {
         stream.getTracks().forEach((track) => track.stop());
         stream = null;
+        video.srcObject = null;
     }
 }
 
-const fileInput = document.getElementById('image');
-const uploadZone = document.getElementById('upload-zone');
+if (captureBtn) {
+    captureBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+
+        if (!video.srcObject) {
+            showErrorToast('Camera is not available.');
+            return;
+        }
+
+        captureCanvas.width = video.videoWidth;
+        captureCanvas.height = video.videoHeight;
+
+        captureCtx.drawImage(video, 0, 0, captureCanvas.width, captureCanvas.height);
+        
+        currentImage = captureCanvas.toDataURL('image/png');
+        currentStickerIndex = 0;
+
+        showStickerPreview('camera');
+        stopCamera();
+    });
+}
+
+/* ==============================
+    FILE UPLOAD
+============================== */
 
 if (uploadZone) {
     uploadZone.addEventListener('dragover', (e) => {
@@ -82,24 +167,38 @@ if (uploadZone) {
     });
 }
 
-const canvas = document.getElementById('preview-canvas');
-const ctx = canvas?.getContext('2d');
-const stickerPreview = document.getElementById('sticker-preview');
-const stickerInfo = document.getElementById('sticker-info');
-const prevBtn = document.getElementById('prev-sticker');
-const nextBtn = document.getElementById('next-sticker');
-const changeImageBtn = document.getElementById('change-image');
+fileInput.addEventListener('change', (e) => {
+    const file = e.target.files[0];
 
-const stickers = [
-    'public/images/stickers/sticker_1.png',
-    'public/images/stickers/sticker_2.png',
-    'public/images/stickers/sticker_3.png',
-    'public/images/stickers/sticker_4.png',
-    'public/images/stickers/sticker_5.png',
-];
+    if (file) {
+        if (!file.type.startsWith('image/')) {
+            showErrorToast('This file type is not supported.');
+            fileInput.value = '';
+            return;
+        }
 
-let currentStickerIndex = 0;
-let currentImage = null;
+        if (file.size > 5 * 1024 * 1024) {
+            showErrorToast('File size exceeds 5MB limit.');
+            fileInput.value = '';
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onerror = () => {
+            showErrorToast('Error reading the file.');
+        };
+        reader.onload = (event) => {
+            currentImage = event.target.result;
+            currentStickerIndex = 0;
+            showStickerPreview('upload');
+        };
+        reader.readAsDataURL(file);
+    }
+});
+
+/* ==============================
+    STICKER PREVIEW
+============================== */
 
 function drawCanvas() {
     if (!currentImage || !ctx) return;
@@ -134,6 +233,45 @@ function updateStickerInfo() {
     }
 }
 
+function showStickerPreview(mode) {
+    currentMode = mode;
+
+    if (mode === 'camera') {
+        document.getElementById('webcam')?.classList.add('hidden');
+        document.getElementById('capture-btn')?.classList.add('hidden');
+    } else {
+        document.getElementById('upload-form')?.classList.add('hidden');
+    }
+
+    // TODO: Reset sticker position and scale
+
+    if (stickerPreview) stickerPreview.classList.remove('hidden');
+    updateStickerInfo();
+    drawCanvas();
+}
+
+function hideStickerPreview(mode) {
+
+    if (mode === 'camera') {
+        document.getElementById('webcam')?.classList.remove('hidden');
+        document.getElementById('capture-btn')?.classList.remove('hidden');
+    } else {
+        document.getElementById('upload-form')?.classList.remove('hidden');
+    }
+
+    if (stickerPreview) stickerPreview.classList.add('hidden');
+    currentImage = null;
+    currentStickerIndex = 0;
+    
+    if (mode === 'camera') {
+        startCamera();
+    }
+}
+
+/* ==============================
+    STICKER NAVIGATION
+============================== */
+
 if (prevBtn) {
     prevBtn.addEventListener('click', (e) => {
         e.preventDefault();
@@ -156,43 +294,18 @@ if (changeImageBtn) {
     changeImageBtn.addEventListener('click', (e) => {
         e.preventDefault();
         fileInput.value = '';
-        if (stickerPreview) stickerPreview.classList.add('hidden');
-        if (uploadZone) uploadZone.classList.remove('hidden');
-        currentImage = null;
-        currentStickerIndex = 0;
+        hideStickerPreview(currentMode);
     });
 }
 
-fileInput.addEventListener('change', (e) => {
-    const file = e.target.files[0];
-    if (file) {
-        if (!file.type.startsWith('image/')) {
-            showErrorToast('This file type is not supported.');
-            fileInput.value = '';
-            return;
-        }
+/* ==============================
+    STICKER DRAG & RESIZE
+============================== */
 
-        if (file.size > 5 * 1024 * 1024) {
-            showErrorToast('File size exceeds 5MB limit.');
-            fileInput.value = '';
-            return;
-        }
 
-        const reader = new FileReader();
-        reader.onerror = () => {
-            showErrorToast('Error reading the file.');
-        };
-        reader.onload = (event) => {
-            currentImage = event.target.result;
-            if (uploadZone) uploadZone.classList.add('hidden');
-            if (stickerPreview) stickerPreview.classList.remove('hidden');
-            currentStickerIndex = 0;
-            updateStickerInfo();
-            drawCanvas();
-        };
-        reader.readAsDataURL(file);
-    }
-});
+/* ==============================
+    NOTIFICATIONS
+============================== */
 
 function showErrorToast(message) {
     const toast = document.createElement('div');
@@ -208,3 +321,9 @@ function showErrorToast(message) {
 
     setTimeout(() => toast.remove(), 5000);
 }
+
+/* ==============================
+    INITIALIZATION
+============================== */
+
+startCamera();

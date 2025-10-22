@@ -56,10 +56,12 @@ require_once dirname(__DIR__) . '/layouts/header.php';
                     <i class="fa-solid fa-circle mr-2"></i>Capture
                 </button>
             </div>
+
+            <canvas id="capture-canvas" class="hidden"></canvas>
         </div>
 
         <div id="upload-tab" class="tab-content hidden">
-            <form action="/upload" method="post" enctype="multipart/form-data" class="flex flex-col gap-6">
+            <form id="upload-form" action="/upload" method="post" enctype="multipart/form-data" class="flex flex-col gap-6">
                 <div class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-sky-500 hover:bg-sky-50 transition">
                     <label for="image" class="cursor-pointer">
                         <div class="flex flex-col items-center gap-3">
@@ -75,32 +77,36 @@ require_once dirname(__DIR__) . '/layouts/header.php';
                             name="image"
                             accept="image/jpeg,image/png,image/gif,image/webp"
                             class="hidden"
-                            required>
+                            required
+                        >
                     </label>
                 </div>
 
-                <div id="sticker-preview" class="hidden">
-                    <div class="flex flex-col gap-4">
-                        <canvas id="preview-canvas" class="w-full rounded-lg bg-black" style="max-height: 500px;"></canvas>
-
-                        <div class="flex justify-between items-center">
-                            <button id="prev-sticker" class="bg-sky-400 text-white px-4 py-2 rounded hover:bg-sky-500">◄</button>
-                            <span id="sticker-info" class="font-semibold text-gray-700">Sticker 1/5</span>
-                            <button id="next-sticker" class="bg-sky-400 text-white px-4 py-2 rounded hover:bg-sky-500">►</button>
-                        </div>
-
-                        <div class="flex gap-3">
-                            <button type="button" id="change-image" class="flex-1 bg-red-500 text-white py-2 px-4 rounded-lg font-semibold hover:bg-red-600 transition">
-                                <i class="fa-solid fa-xmark mr-2"></i>Cancel
-                            </button>
-                            <button type="submit" class="flex-1 bg-sky-400 text-white py-2 px-4 rounded-lg font-semibold hover:bg-sky-500 transition">
-                                <i class="fa-solid fa-check mr-2"></i>Validate
-                            </button>
-                        </div>
-                    </div>
-                </div>
+                <canvas id="upload-canvas" class="hidden"></canvas>
             </form>
         </div>
+
+        <div id="sticker-preview" class="hidden">
+            <div class="flex flex-col gap-4">
+                <canvas id="preview-canvas" class="w-full rounded-lg bg-black" style="max-height: 500px;"></canvas>
+
+                <div class="flex justify-between items-center">
+                    <button id="prev-sticker" class="bg-sky-400 text-white px-4 py-2 rounded hover:bg-sky-500">◄</button>
+                    <span id="sticker-info" class="font-semibold text-gray-700">Sticker 1/5</span>
+                    <button id="next-sticker" class="bg-sky-400 text-white px-4 py-2 rounded hover:bg-sky-500">►</button>
+                </div>
+
+                <div class="flex gap-3">
+                    <button type="button" id="change-image" class="flex-1 bg-red-500 text-white py-2 px-4 rounded-lg font-semibold hover:bg-red-600 transition">
+                        <i class="fa-solid fa-xmark mr-2"></i>Cancel
+                    </button>
+                    <button type="submit" class="flex-1 bg-sky-400 text-white py-2 px-4 rounded-lg font-semibold hover:bg-sky-500 transition">
+                        <i class="fa-solid fa-check mr-2"></i>Validate
+                    </button>
+                </div>
+            </div>
+        </div>
+
     </div>
 </main>
 

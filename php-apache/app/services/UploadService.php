@@ -45,6 +45,7 @@ class UploadService
 
     private function generateFilePath(Image $image): string
     {
+        echo '<pre>', var_dump($image), '</pre>' ;
         return '';
     }
 }
