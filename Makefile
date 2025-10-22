@@ -13,6 +13,6 @@ down:
 
 fclean: down
 	docker system prune -af --volumes
-	sudo rm -rf /home/arazzok/Documents/camagru/database
+	rm -rf /home/arazzok/Documents/camagru/database
 
 re: fclean all
