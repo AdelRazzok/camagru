@@ -22,6 +22,9 @@ RUN a2enmod rewrite
 
 COPY /app /var/www/html/
 
+RUN echo "upload_max_filesize = 10M" >> $PHP_INI_DIR/php.ini-development && \
+    echo "post_max_size = 10M" >> $PHP_INI_DIR/php.ini-development
+
 RUN mv "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"
 
 COPY php.ini $PHP_INI_DIR/conf.d/

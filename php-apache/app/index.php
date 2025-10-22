@@ -10,6 +10,7 @@ use controllers\LoginController;
 use controllers\SignupController;
 use controllers\VerifyController;
 use controllers\PasswordResetController;
+use controllers\UploadController;
 
 date_default_timezone_set('Europe/Paris');
 
@@ -34,6 +35,13 @@ $router->get('/forgot-password', [PasswordResetController::class, 'showForm']);
 $router->post('/forgot-password', [PasswordResetController::class, 'sendResetLink']);
 $router->get('/reset-password', [PasswordResetController::class, 'showResetForm']);
 $router->post('/reset-password', [PasswordResetController::class, 'resetPassword']);
+
+$router->get('/upload', [UploadController::class, 'showUploadForm'], [
+    'middlewares' => [AuthMiddleware::class]
+]);
+$router->post('/upload', [UploadController::class, 'upload'], [
+    'middlewares' => [AuthMiddleware::class]
+]);
 
 // $router->get('/profile', [ProfileController::class, 'index'], [
 //     'middlewares' => [AuthMiddleware::class]
