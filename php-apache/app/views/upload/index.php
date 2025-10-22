@@ -79,29 +79,27 @@ require_once dirname(__DIR__) . '/layouts/header.php';
                     </label>
                 </div>
 
-                <div id="preview-container" class="hidden">
-                    <div class="relative">
-                        <img id="preview-image" src="" alt="Preview" class="w-full rounded-lg max-h-80 object-contain">
-                        <button type="button" id="remove-image" class="absolute top-2 right-2 bg-red-500 text-white rounded-full px-2 py-1 hover:bg-red-600">
-                            <i class="fa-solid fa-xmark"></i>
-                        </button>
-                    </div>
-                    <div class="mt-2 text-sm text-gray-600">
-                        <p><strong id="file-name"></strong></p>
-                        <p id="file-size"></p>
+                <div id="sticker-preview" class="hidden">
+                    <div class="flex flex-col gap-4">
+                        <canvas id="preview-canvas" class="w-full rounded-lg bg-black" style="max-height: 500px;"></canvas>
+
+                        <div class="flex justify-between items-center">
+                            <button id="prev-sticker" class="bg-sky-400 text-white px-4 py-2 rounded hover:bg-sky-500">◄</button>
+                            <span id="sticker-info" class="font-semibold text-gray-700">Sticker 1/5</span>
+                            <button id="next-sticker" class="bg-sky-400 text-white px-4 py-2 rounded hover:bg-sky-500">►</button>
+                        </div>
+
+                        <div class="flex gap-3">
+                            <button type="button" id="change-image" class="flex-1 bg-red-500 text-white py-2 px-4 rounded-lg font-semibold hover:bg-red-600 transition">
+                                <i class="fa-solid fa-xmark mr-2"></i>Cancel
+                            </button>
+                            <button type="submit" class="flex-1 bg-sky-400 text-white py-2 px-4 rounded-lg font-semibold hover:bg-sky-500 transition">
+                                <i class="fa-solid fa-check mr-2"></i>Validate
+                            </button>
+                        </div>
                     </div>
                 </div>
-
-                <button
-                    type="submit"
-                    class="w-full bg-sky-500 text-white py-3 px-4 rounded-lg font-semibold hover:bg-sky-600 transition duration-200">
-                    Upload Image
-                </button>
             </form>
-        </div>
-
-        <div class="text-center mt-6">
-            <a href="/" class="text-sm text-gray-600 hover:text-gray-800">← Back to home</a>
         </div>
     </div>
 </main>

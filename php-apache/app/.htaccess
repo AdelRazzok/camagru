@@ -2,8 +2,19 @@
     RewriteEngine On
     RewriteBase /
 
+    RewriteCond %{REQUEST_FILENAME} -f [OR]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteCond %{REQUEST_URI} ^/(public|images)/ [NC]
+    RewriteRule ^ - [L]
+
+    RewriteRule ^(services|database|models|controllers|core|repositories|views|http)/ - [F,L]
+    RewriteRule ^(\.env|\.git|autoload\.php)$ - [F,L]
+
+    <FilesMatch "\.(env|ini|config|sql)$">
+        Deny from all
+    </FilesMatch>
+
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d
-
     RewriteRule ^(.*)$ index.php [QSA,L]
 </IfModule>
