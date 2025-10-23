@@ -35,6 +35,8 @@ const prevBtn = document.getElementById('prev-sticker');
 const nextBtn = document.getElementById('next-sticker');
 const changeImageBtn = document.getElementById('change-image');
 
+const validateBtn = document.getElementById('validate-btn');
+
 /* ==============================
     STATE
 ============================== */
@@ -49,10 +51,6 @@ let currentStickerHeight = 100;
 let currentStickerX = 0;
 let currentStickerY = 0;
 let currentStickerScale = 1;
-let isDragging = false;
-let dragStartX = 0;
-let dragStartY = 0;
-let stickerCentered = false;
 
 /* ==============================
     TAB MANAGEMENT
@@ -227,11 +225,8 @@ function drawCanvas() {
             currentStickerWidth = stickerImg.width;
             currentStickerHeight = stickerImg.height;
 
-            if (currentStickerX === 0 && currentStickerY === 0) {
-                currentStickerX = (CANVAS_WIDTH - currentStickerWidth * currentStickerScale) / 2;
-                currentStickerY = (CANVAS_HEIGHT - currentStickerHeight * currentStickerScale) / 2;
-                stickerCentered = true;
-            }
+            currentStickerX = (CANVAS_WIDTH - currentStickerWidth * currentStickerScale) / 2;
+            currentStickerY = (CANVAS_HEIGHT - currentStickerHeight * currentStickerScale) / 2;
 
             const stickerWidth = currentStickerWidth * currentStickerScale;
             const stickerHeight = currentStickerHeight * currentStickerScale;
@@ -259,11 +254,6 @@ function showStickerPreview(mode) {
         document.getElementById('upload-form')?.classList.add('hidden');
     }
 
-    currentStickerX = 0;
-    currentStickerY = 0;
-    currentStickerScale = 1;
-    stickerCentered = false;
-
     if (stickerPreview) stickerPreview.classList.remove('hidden');
     updateStickerInfo();
     drawCanvas();
@@ -281,10 +271,9 @@ function hideStickerPreview(mode) {
     if (stickerPreview) stickerPreview.classList.add('hidden');
     currentImage = null;
     currentStickerIndex = 0;
+    currentStickerScale = 1;
     currentStickerX = 0;
     currentStickerY = 0;
-    currentStickerScale = 1;
-    stickerCentered = false;
 
     if (mode === 'camera') {
         startCamera();
@@ -300,9 +289,6 @@ if (prevBtn) {
         e.preventDefault();
         currentStickerIndex = (currentStickerIndex - 1 + stickers.length) % stickers.length;
         currentStickerScale = 1;
-        stickerCentered = false;
-        currentStickerX = 0;
-        currentStickerY = 0;
         updateStickerInfo();
         drawCanvas();
     });
@@ -313,9 +299,6 @@ if (nextBtn) {
         e.preventDefault();
         currentStickerIndex = (currentStickerIndex + 1) % stickers.length;
         currentStickerScale = 1;
-        stickerCentered = false;
-        currentStickerX = 0;
-        currentStickerY = 0;
         updateStickerInfo();
         drawCanvas();
     });
@@ -330,55 +313,61 @@ if (changeImageBtn) {
 }
 
 /* ==============================
-    STICKER DRAG & RESIZE
+    SUBMIT
 ============================== */
 
-canvas.addEventListener('mousedown', (e) => {
-    const rect = canvas.getBoundingClientRect();
-    const mouseX = e.clientX - rect.left;
-    const mouseY = e.clientY - rect.top;
+function prepareUploadData() {
+    return {
+        image: currentImage,
+        sticker_id: currentStickerIndex,
+        position: {
+            x: Math.round(currentStickerX),
+            y: Math.round(currentStickerY),
+        },
+        scale: Math.round(currentStickerScale * 100) / 100,
+        canvas_width: CANVAS_WIDTH,
+        canvas_height: CANVAS_HEIGHT,
+    };
+}
 
-    const stickerWidth = currentStickerWidth * currentStickerScale;
-    const stickerHeight = currentStickerHeight * currentStickerScale;
+// if (validateBtn) {
+    // validateBtn.addEventListener('click', async (e) => {
+    //     e.preventDefault();
 
-    if (mouseX >= currentStickerX && mouseX <= currentStickerX + stickerWidth &&
-             mouseY >= currentStickerY && mouseY <= currentStickerY + stickerHeight) {
-        isDragging = true;
-    }
+    //     const uploadData = prepareUploadData();
+        
+    //     if (!uploadData.image) {
+    //         showErrorToast('No image to upload.');
+    //         return;
+    //     }
 
-    dragStartX = mouseX;
-    dragStartY = mouseY;
-});
-
-canvas.addEventListener('mousemove', (e) => {
-    if (!isDragging) return;
-
-    const rect = canvas.getBoundingClientRect();
-    const mouseX = e.clientX - rect.left;
-    const mouseY = e.clientY - rect.top;
-
-    const deltaX = mouseX - dragStartX;
-    const deltaY = mouseY - dragStartY;
-
-    currentStickerX += deltaX;
-    currentStickerY += deltaY;
-
-    currentStickerX = Math.max(0, Math.min(currentStickerX, CANVAS_WIDTH - 50));
-    currentStickerY = Math.max(0, Math.min(currentStickerY, CANVAS_HEIGHT - 50));
-
-    dragStartX = mouseX;
-    dragStartY = mouseY;
-
-    drawCanvas();
-});
-
-canvas.addEventListener('mouseup', () => {
-    isDragging = false;
-});
-
-canvas.addEventListener('mouseleave', () => {
-    isDragging = false;
-});
+    //     fetch(uploadData.image)
+    //         .then(response => response.blob())
+    //         .then(imageBlob => {
+    //             const formData = new FormData();
+    //             formData.append('image', imageBlob, 'upload.png');
+    //             formData.append('sticker_id', uploadData.sticker_id);
+    //             formData.append('position_x', uploadData.position.x);
+    //             formData.append('position_y', uploadData.position.y);
+    //             formData.append('scale', uploadData.scale);
+    //             formData.append('canvas_width', uploadData.canvas_width);
+    //             formData.append('canvas_height', uploadData.canvas_height);
+            
+    //             return fetch('/upload', {
+    //                 method: 'POST',
+    //                 body: formData,
+    //             });
+    //         })
+    //         .then(response => response.json())
+    //         .then(data => {
+    //             console.log('Upload successful:', data);
+    //         })
+    //         .catch(error => {
+    //             console.error('Upload error:', error);
+    //             showErrorToast('Error uploading the image.');
+    //         });
+    // });
+// }
 
 /* ==============================
     NOTIFICATIONS
