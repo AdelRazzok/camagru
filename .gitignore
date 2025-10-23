@@ -9,3 +9,6 @@
 
 # log files
 *.log
+
+# Docker files
+database

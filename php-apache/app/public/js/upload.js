@@ -4,7 +4,6 @@
 
 const CANVAS_WIDTH = 800;
 const CANVAS_HEIGHT = 600;
-const STICKER_HANDLE_SIZE = 20;
 
 const stickers = [
     'public/images/stickers/sticker_1.png',
@@ -24,7 +23,6 @@ const tabContents = document.querySelectorAll('.tab-content');
 const video = document.getElementById('webcam');
 const captureBtn = document.getElementById('capture-btn');
 const captureCanvas = document.getElementById('capture-canvas');
-const captureCtx = captureCanvas?.getContext('2d');
 
 const fileInput = document.getElementById('image');
 const uploadZone = document.getElementById('upload-zone');
@@ -46,13 +44,15 @@ let currentStickerIndex = 0;
 let currentImage = null;
 let currentMode = null;
 
+let currentStickerWidth = 100;
+let currentStickerHeight = 100;
 let currentStickerX = 0;
 let currentStickerY = 0;
 let currentStickerScale = 1;
 let isDragging = false;
-let isResizing = false;
 let dragStartX = 0;
 let dragStartY = 0;
+let stickerCentered = false;
 
 /* ==============================
     TAB MANAGEMENT
@@ -132,6 +132,12 @@ if (captureBtn) {
             return;
         }
 
+        const captureCtx = captureCanvas?.getContext('2d');
+        if (!captureCtx) {
+            showErrorToast('Error initializing capture.');
+            return;
+        }
+
         captureCanvas.width = video.videoWidth;
         captureCanvas.height = video.videoHeight;
 
@@ -208,19 +214,29 @@ function drawCanvas() {
         showErrorToast('Error loading image.');
     };
     img.onload = () => {
-        canvas.width = img.width;
-        canvas.height = img.height;
+        canvas.width = CANVAS_WIDTH;
+        canvas.height = CANVAS_HEIGHT;
 
-        ctx.drawImage(img, 0, 0);
+        ctx.drawImage(img, 0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
         const stickerImg = new Image();
         stickerImg.onerror = () => {
             console.error('Error loading sticker:', stickers[currentStickerIndex]);
         };
         stickerImg.onload = () => {
-            const x = (canvas.width - stickerImg.width) / 2;
-            const y = (canvas.height - stickerImg.height) / 2;
-            ctx.drawImage(stickerImg, x, y);
+            currentStickerWidth = stickerImg.width;
+            currentStickerHeight = stickerImg.height;
+
+            if (currentStickerX === 0 && currentStickerY === 0) {
+                currentStickerX = (CANVAS_WIDTH - currentStickerWidth * currentStickerScale) / 2;
+                currentStickerY = (CANVAS_HEIGHT - currentStickerHeight * currentStickerScale) / 2;
+                stickerCentered = true;
+            }
+
+            const stickerWidth = currentStickerWidth * currentStickerScale;
+            const stickerHeight = currentStickerHeight * currentStickerScale;
+
+            ctx.drawImage(stickerImg, currentStickerX, currentStickerY, stickerWidth, stickerHeight);
         };
         stickerImg.src = stickers[currentStickerIndex];
     };
@@ -243,7 +259,10 @@ function showStickerPreview(mode) {
         document.getElementById('upload-form')?.classList.add('hidden');
     }
 
-    // TODO: Reset sticker position and scale
+    currentStickerX = 0;
+    currentStickerY = 0;
+    currentStickerScale = 1;
+    stickerCentered = false;
 
     if (stickerPreview) stickerPreview.classList.remove('hidden');
     updateStickerInfo();
@@ -276,6 +295,7 @@ if (prevBtn) {
     prevBtn.addEventListener('click', (e) => {
         e.preventDefault();
         currentStickerIndex = (currentStickerIndex - 1 + stickers.length) % stickers.length;
+        currentStickerScale = 1;
         updateStickerInfo();
         drawCanvas();
     });
@@ -285,6 +305,7 @@ if (nextBtn) {
     nextBtn.addEventListener('click', (e) => {
         e.preventDefault();
         currentStickerIndex = (currentStickerIndex + 1) % stickers.length;
+        currentStickerScale = 1;
         updateStickerInfo();
         drawCanvas();
     });
@@ -302,6 +323,60 @@ if (changeImageBtn) {
     STICKER DRAG & RESIZE
 ============================== */
 
+// * Drag fonctionne mais placement pourrait par defaut pourrait etre ameliore
+
+// ! Resize ne fonctionne pas : aucun cadre d'aucune couleur ne s'ajoute
+
+// TODO: Ameliorer, fix et passer en refactor leger puis envoyer au backend
+
+canvas.addEventListener('mousedown', (e) => {
+    const rect = canvas.getBoundingClientRect();
+    const mouseX = e.clientX - rect.left;
+    const mouseY = e.clientY - rect.top;
+
+    const stickerWidth = currentStickerWidth * currentStickerScale;
+    const stickerHeight = currentStickerHeight * currentStickerScale;
+
+    if (mouseX >= currentStickerX && mouseX <= currentStickerX + stickerWidth &&
+             mouseY >= currentStickerY && mouseY <= currentStickerY + stickerHeight) {
+        isDragging = true;
+    }
+
+    dragStartX = mouseX;
+    dragStartY = mouseY;
+});
+
+canvas.addEventListener('mousemove', (e) => {
+    if (!isDragging) return;
+
+    const rect = canvas.getBoundingClientRect();
+    const mouseX = e.clientX - rect.left;
+    const mouseY = e.clientY - rect.top;
+
+    if (isDragging) {
+        const deltaX = mouseX - dragStartX;
+        const deltaY = mouseY - dragStartY;
+
+        currentStickerX += deltaX;
+        currentStickerY += deltaY;
+
+        currentStickerX = Math.max(0, Math.min(currentStickerX, CANVAS_WIDTH - 50));
+        currentStickerY = Math.max(0, Math.min(currentStickerY, CANVAS_HEIGHT - 50));
+
+        dragStartX = mouseX;
+        dragStartY = mouseY;
+
+        drawCanvas();
+    }
+});
+
+canvas.addEventListener('mouseup', () => {
+    isDragging = false;
+});
+
+canvas.addEventListener('mouseleave', () => {
+    isDragging = false;
+});
 
 /* ==============================
     NOTIFICATIONS
