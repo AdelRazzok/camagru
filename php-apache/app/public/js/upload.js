@@ -281,7 +281,11 @@ function hideStickerPreview(mode) {
     if (stickerPreview) stickerPreview.classList.add('hidden');
     currentImage = null;
     currentStickerIndex = 0;
-    
+    currentStickerX = 0;
+    currentStickerY = 0;
+    currentStickerScale = 1;
+    stickerCentered = false;
+
     if (mode === 'camera') {
         startCamera();
     }
@@ -296,6 +300,9 @@ if (prevBtn) {
         e.preventDefault();
         currentStickerIndex = (currentStickerIndex - 1 + stickers.length) % stickers.length;
         currentStickerScale = 1;
+        stickerCentered = false;
+        currentStickerX = 0;
+        currentStickerY = 0;
         updateStickerInfo();
         drawCanvas();
     });
@@ -306,6 +313,9 @@ if (nextBtn) {
         e.preventDefault();
         currentStickerIndex = (currentStickerIndex + 1) % stickers.length;
         currentStickerScale = 1;
+        stickerCentered = false;
+        currentStickerX = 0;
+        currentStickerY = 0;
         updateStickerInfo();
         drawCanvas();
     });
@@ -322,12 +332,6 @@ if (changeImageBtn) {
 /* ==============================
     STICKER DRAG & RESIZE
 ============================== */
-
-// * Drag fonctionne mais placement pourrait par defaut pourrait etre ameliore
-
-// ! Resize ne fonctionne pas : aucun cadre d'aucune couleur ne s'ajoute
-
-// TODO: Ameliorer, fix et passer en refactor leger puis envoyer au backend
 
 canvas.addEventListener('mousedown', (e) => {
     const rect = canvas.getBoundingClientRect();
@@ -353,21 +357,19 @@ canvas.addEventListener('mousemove', (e) => {
     const mouseX = e.clientX - rect.left;
     const mouseY = e.clientY - rect.top;
 
-    if (isDragging) {
-        const deltaX = mouseX - dragStartX;
-        const deltaY = mouseY - dragStartY;
+    const deltaX = mouseX - dragStartX;
+    const deltaY = mouseY - dragStartY;
 
-        currentStickerX += deltaX;
-        currentStickerY += deltaY;
+    currentStickerX += deltaX;
+    currentStickerY += deltaY;
 
-        currentStickerX = Math.max(0, Math.min(currentStickerX, CANVAS_WIDTH - 50));
-        currentStickerY = Math.max(0, Math.min(currentStickerY, CANVAS_HEIGHT - 50));
+    currentStickerX = Math.max(0, Math.min(currentStickerX, CANVAS_WIDTH - 50));
+    currentStickerY = Math.max(0, Math.min(currentStickerY, CANVAS_HEIGHT - 50));
 
-        dragStartX = mouseX;
-        dragStartY = mouseY;
+    dragStartX = mouseX;
+    dragStartY = mouseY;
 
-        drawCanvas();
-    }
+    drawCanvas();
 });
 
 canvas.addEventListener('mouseup', () => {
