@@ -11,8 +11,9 @@ stop:
 down:
 	docker-compose -f ./docker-compose.yml down -v
 
+restart: down up
+
 fclean: down
 	docker system prune -af --volumes
-	rm -rf /home/arazzok/Documents/camagru/database
 
 re: fclean all
