@@ -65,12 +65,12 @@ tabButtons.forEach((button) => {
         }
 
         tabButtons.forEach((btn) => {
-            btn.classList.remove('text-sky-500', 'border-b-2', 'border-sky-500');
-            btn.classList.add('text-gray-600', 'border-b-2', 'border-transparent');
+            btn.classList.remove('text-sky-500', 'border-sky-500');
+            btn.classList.add('text-gray-600', 'border-transparent');
         });
 
-        button.classList.add('text-sky-500', 'border-b-2', 'border-sky-500');
-        button.classList.remove('text-gray-600', 'border-b-2', 'border-transparent');
+        button.classList.remove('text-gray-600', 'border-transparent');
+        button.classList.add('text-sky-500', 'border-sky-500');
 
         tabContents.forEach((content) => {
             content.classList.add('hidden');
@@ -316,6 +316,26 @@ if (changeImageBtn) {
     SUBMIT
 ============================== */
 
+function resetUploadForm() {
+    if (stickerPreview) stickerPreview.classList.add('hidden');
+
+    currentImage = null;
+    currentStickerIndex = 0;
+    currentStickerScale = 1;
+    currentStickerX = 0;
+    currentStickerY = 0;
+
+    fileInput.value = '';
+
+    if (currentMode === 'camera') {
+        document.getElementById('webcam')?.classList.remove('hidden');
+        document.getElementById('capture-btn')?.classList.remove('hidden');
+        startCamera();
+    } else {
+        document.getElementById('upload-form')?.classList.remove('hidden');
+    }
+}
+
 function prepareUploadData() {
     return {
         image: currentImage,
@@ -356,8 +376,8 @@ if (validateBtn) {
             const data = await response.json();
 
             if (data.success) {
-                // showSuccessPreview(data.image_path);
                 showSuccessToast('Image uploaded successfully! 🎉');
+                resetUploadForm();
             }
         } catch (error) {
             console.error('Upload error: ', error);
@@ -398,42 +418,6 @@ function showSuccessToast(message) {
     document.body.appendChild(toast);
 
     setTimeout(() => toast.remove(), 5000);
-}
-
-function showSuccessPreview(imagePath) {
-    const modal = document.createElement('div');
-    modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
-    modal.id = 'success-modal';
-    
-    modal.innerHTML = `
-        <div class="bg-white rounded-lg shadow-lg p-6 max-w-2xl">
-            <h2 class="text-2xl font-bold mb-4">Image créée avec succès ! 🎉</h2>
-            
-            <img src="${imagePath}" alt="Image fusionnée" class="w-full rounded-lg mb-4" />
-            
-            <div class="flex gap-4">
-                <button id="download-btn" class="flex-1 bg-sky-500 text-white px-4 py-2 rounded hover:bg-sky-600">
-                    Télécharger
-                </button>
-                <button id="close-modal-btn" class="flex-1 bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">
-                    Fermer
-                </button>
-            </div>
-        </div>
-    `;
-    
-    document.body.appendChild(modal);
-    
-    document.getElementById('download-btn').addEventListener('click', () => {
-        const a = document.createElement('a');
-        a.href = imagePath;
-        a.download = imagePath.split('/').pop();
-        a.click();
-    });
-    
-    document.getElementById('close-modal-btn').addEventListener('click', () => {
-        modal.remove();
-    });
 }
 
 /* ==============================
