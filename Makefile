@@ -1,18 +1,30 @@
+COMPOSE_FILE = ./docker-compose.yml
+
 all:
-	docker-compose -f ./docker-compose.yml up -d --build
+	docker-compose -f $(COMPOSE_FILE) up -d --build
 
 up:
-	docker-compose -f ./docker-compose.yml up -d
+	docker-compose -f $(COMPOSE_FILE) up -d
 
 stop:
-	docker-compose -f ./docker-compose.yml stop
+	docker-compose -f $(COMPOSE_FILE) stop
 
 down:
-	docker-compose -f ./docker-compose.yml down -v
+	docker-compose -f $(COMPOSE_FILE) down
 
-restart: down up
+hard-down:
+	docker-compose -f $(COMPOSE_FILE) down -v
 
-fclean: down
+restart:
+	docker-compose -f $(COMPOSE_FILE) restart
+
+prune:
 	docker system prune -af --volumes
 
+fclean:
+	docker-compose -f $(COMPOSE_FILE) down -v
+
+freset: prune all
+
 re: fclean all
+

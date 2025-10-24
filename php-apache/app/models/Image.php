@@ -8,6 +8,7 @@ use finfo;
 class Image extends Model
 {
     protected ?int $id;
+    protected int $user_id;
     protected string $file_path;
     protected string $extension;
     protected string $mime_type;
@@ -32,6 +33,17 @@ class Image extends Model
     public function setId(?int $id): Image
     {
         $this->id = $id;
+        return $this;
+    }
+
+    public function getUserId(): int
+    {
+        return $this->user_id;
+    }
+
+    public function setUserId(int $user_id): Image
+    {
+        $this->user_id = $user_id;
         return $this;
     }
 

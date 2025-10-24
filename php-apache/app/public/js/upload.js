@@ -356,7 +356,8 @@ if (validateBtn) {
             const data = await response.json();
 
             if (data.success) {
-                showSuccessPreview(data.image_path);
+                // showSuccessPreview(data.image_path);
+                showSuccessToast('Image uploaded successfully! 🎉');
             }
         } catch (error) {
             console.error('Upload error: ', error);
@@ -376,6 +377,21 @@ function showErrorToast(message) {
     toast.innerHTML = `
         <div class="flex items-center gap-3">
             <i class="fa-solid fa-circle-exclamation"></i>
+            <p>${message}</p>
+        </div>
+    `;
+    document.body.appendChild(toast);
+
+    setTimeout(() => toast.remove(), 5000);
+}
+
+function showSuccessToast(message) {
+    const toast = document.createElement('div');
+    toast.className =
+        'fixed top-4 right-4 bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded shadow-md z-50';
+    toast.innerHTML = `
+        <div class="flex items-center gap-3">
+            <i class="fa-solid fa-circle-check"></i>
             <p>${message}</p>
         </div>
     `;

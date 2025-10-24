@@ -2,9 +2,11 @@
 
 namespace controllers;
 
-use models\Image;
-use services\UploadService;
+use database\Postgresql;
 use http\SessionManager;
+use models\Image;
+use repositories\SQLImageRepository;
+use services\UploadService;
 
 class UploadController
 {
@@ -13,7 +15,13 @@ class UploadController
 
     public function __construct()
     {
-        $this->uploadService = new UploadService();
+        $db = new Postgresql(
+            getenv('POSTGRES_HOST'),
+            (int)getenv('POSTGRES_PORT')
+        );
+
+        $imageRepository = new SQLImageRepository($db->getConnection());
+        $this->uploadService = new UploadService($imageRepository);
         $this->session = SessionManager::getInstance();
     }
 
@@ -28,7 +36,7 @@ class UploadController
 
         $result = $this->uploadService->mergeImageWithSticker($_FILES['image'], $_POST['sticker_id'], $currentUserId);
 
-        // echo '<pre>', var_dump($result), '</pre>';
+        echo '<pre>', var_dump($result), '</pre>';
 
         echo json_encode($result);
     }

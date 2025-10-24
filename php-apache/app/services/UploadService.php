@@ -3,17 +3,26 @@
 namespace services;
 
 use models\Image;
+use repositories\interfaces\ImageRepositoryInterface;
 
 class UploadService
 {
+    private ImageRepositoryInterface $imageRepository;
+
     private const UPLOAD_DIR = '/var/www/html/uploads/';
     private const STICKER_DIR = '/var/www/html/public/images/stickers/';
     private const CANVAS_WIDTH = 800;
     private const CANVAS_HEIGHT = 600;
 
+    public function __construct(ImageRepositoryInterface $imageRepository)
+    {
+        $this->imageRepository = $imageRepository;
+    }
+
     public function mergeImageWithSticker(array $file, int $sticker_id, int $user_id): array
     {
         $image = (new Image())
+            ->setUserId($user_id)
             ->setExtension(pathinfo($file['name'], PATHINFO_EXTENSION))
             ->setMimeType($file['type'])
             ->setOriginalName($file['name'])
@@ -87,7 +96,7 @@ class UploadService
             $stickerWidth, $stickerHeight
         );
 
-        $uploadPath = $this->generateUploadPath($user_id);
+        $uploadPath = $this->generateUploadPath($image->getUserId());
         $filename = $this->generateFilename();
         $filepath = $uploadPath . $filename;
 
@@ -105,6 +114,8 @@ class UploadService
         imagedestroy($imageFile);
         imagedestroy($sticker);
         imagedestroy($canvas);
+
+        $this->imageRepository->save($image);
 
         return [
             'success' => true,

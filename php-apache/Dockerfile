@@ -13,28 +13,17 @@ RUN apt-get update && apt-get install -y \
   && docker-php-ext-install -j$(nproc) gd \
   && docker-php-ext-install pgsql pdo_pgsql curl fileinfo mbstring exif
 
-COPY msmtprc /etc/msmtprc
-
-RUN touch /var/log/msmtp.log && \
-  chmod 666 /var/log/msmtp.log
+COPY app/ /var/www/html/
 
 RUN a2enmod rewrite
+COPY apache2.conf /etc/apache2/conf-available/servername.conf
+RUN a2enconf servername
 
-COPY /app /var/www/html/
-
-RUN chown -R www-data:www-data /var/www/html && \
-    chmod -R 755 /var/www/html && \
-    chmod 644 /var/www/html/.htaccess
-
-RUN echo "upload_max_filesize = 10M" >> $PHP_INI_DIR/php.ini-development && \
-    echo "post_max_size = 10M" >> $PHP_INI_DIR/php.ini-development
-
-RUN mv "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"
-
+RUN echo "upload_max_filesize = 10M" >> $PHP_INI_DIR/php.ini && \
+    echo "post_max_size = 10M" >> $PHP_INI_DIR/php.ini
 COPY php.ini $PHP_INI_DIR/conf.d/
 
-# COPY apache2.conf /etc/apache2/conf-available/servername.conf
-
-# RUN a2enconf servername
+COPY msmtprc /etc/msmtprc
 
 EXPOSE 80
+WORKDIR /var/www/html

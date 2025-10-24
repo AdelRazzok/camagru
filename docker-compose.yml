@@ -14,8 +14,6 @@ services:
     depends_on:
       - postgres
       - mailcatcher
-    volumes:
-      - app-volume:/var/www/html
     restart: on-failure
 
   postgres:
@@ -56,8 +54,6 @@ services:
     restart: on-failure
 
 volumes:
-  app-volume:
-    driver: local
   postgres-volume:
     driver: local
 
