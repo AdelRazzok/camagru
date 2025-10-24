@@ -33,4 +33,9 @@ COPY apache2.conf /etc/apache2/conf-available/servername.conf
 
 RUN a2enconf servername
 
+COPY entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
 EXPOSE 80
+
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]

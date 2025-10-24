@@ -4,7 +4,9 @@
 
     RewriteCond %{REQUEST_FILENAME} -f [OR]
     RewriteCond %{REQUEST_FILENAME} -d
-    RewriteCond %{REQUEST_URI} ^/(public|images)/ [NC]
+    RewriteRule ^ - [L]
+
+    RewriteCond %{REQUEST_URI} ^/(public|images|uploads)/ [NC]
     RewriteRule ^ - [L]
 
     RewriteRule ^(services|database|models|controllers|core|repositories|views|http)/ - [F,L]
