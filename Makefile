@@ -18,6 +18,10 @@ hard-down:
 restart:
 	docker-compose -f $(COMPOSE_FILE) restart
 
+rfront: down
+	docker volume rm camagru_app-volume > /dev/null 2>&1 || true
+	docker-compose -f $(COMPOSE_FILE) up -d --build
+
 prune:
 	docker system prune -af --volumes
 

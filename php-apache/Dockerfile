@@ -15,6 +15,10 @@ RUN apt-get update && apt-get install -y \
 
 COPY app/ /var/www/html/
 
+RUN mkdir -p /var/www/html/uploads && \
+    chown -R www-data:www-data /var/www/html/uploads && \
+    chmod -R 755 /var/www/html/uploads
+
 RUN a2enmod rewrite
 COPY apache2.conf /etc/apache2/conf-available/servername.conf
 RUN a2enconf servername

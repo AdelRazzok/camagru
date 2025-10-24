@@ -56,19 +56,31 @@ class SQLImageRepository implements ImageRepositoryInterface
 
     public function save(Image $image): void
     {
+        if (!($image instanceof Image)) {
+            throw new \InvalidArgumentException('Expected instance of Image.');
+        }
+
+        $now = date('Y-m-d H:i:s');
+
         if ($image->getId()) {
-            $stmt = $this->conn->prepare('
-                UPDATE images
-                SET user_id = :user_id, file_path = :file_path, extension = :extension,
-                mime_type = :mime_type, original_name = :original_name, file_size = :file_size
+            $stmt = $this->conn->prepare(
+                'UPDATE images
+                    SET user_id = :user_id,
+                        file_path = :file_path,
+                        extension = :extension,
+                        mime_type = :mime_type,
+                        original_name = :original_name,
+                        file_size = :file_size,
+                        updated_at = :updated_at
                 WHERE id = :id
             ');
             $stmt->bindValue(':id', $image->getId(), PDO::PARAM_INT);
         } else {
-            $stmt = $this->conn->prepare('
-                INSERT INTO images (user_id, file_path, extension, mime_type, original_name, file_size)
-                VALUES (:user_id, :file_path, :extension, :mime_type, :original_name, :file_size)
-            ');
+            $stmt = $this->conn->prepare(
+                'INSERT INTO images (user_id, file_path, extension, mime_type, original_name, file_size, created_at, updated_at)
+                    VALUES (:user_id, :file_path, :extension, :mime_type, :original_name, :file_size, :created_at, :updated_at)'
+            );
+            $stmt->bindValue(':created_at', $now);
         }
 
         $stmt->bindValue(':user_id', $image->getUserId(), PDO::PARAM_INT);
@@ -77,7 +89,7 @@ class SQLImageRepository implements ImageRepositoryInterface
         $stmt->bindValue(':mime_type', $image->getMimeType());
         $stmt->bindValue(':original_name', $image->getOriginalName());
         $stmt->bindValue(':file_size', $image->getFileSize(), PDO::PARAM_INT);
-
+        $stmt->bindValue(':updated_at', $now);
         $stmt->execute();
 
         if ($image->getId() === null) {

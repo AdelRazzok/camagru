@@ -36,8 +36,6 @@ class UploadController
 
         $result = $this->uploadService->mergeImageWithSticker($_FILES['image'], $_POST['sticker_id'], $currentUserId);
 
-        echo '<pre>', var_dump($result), '</pre>';
-
         echo json_encode($result);
     }
 }
