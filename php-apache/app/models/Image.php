@@ -105,21 +105,21 @@ class Image extends Model
         if ($this->file_size > self::MAX_FILE_SIZE) {
             $this->errors['file_size'] = 'File size exceeds the maximum limit.';
         }
-
         return empty($this->errors);
     }
 
-    public function isRealImage(string $tmpPath)
+    public function isRealImage(string $tmp_name)
     {
         $finfo = finfo_open(FILEINFO_MIME_TYPE);
-        $mimeType = finfo_file($finfo, $tmpPath);
+        $mimeType = finfo_file($finfo, $tmp_name);
         finfo_close($finfo);
 
         if (!in_array($mimeType, self::ALLOWED_MIME_TYPES)) {
             $this->errors['real_image'] = 'File is not a valid image.';
             return false;
         }
-        if (@getimagesize($tmpPath) === false) {
+
+        if (@getimagesize($tmp_name) === false) {
             $this->errors['real_image'] = 'Cannot read image data.';
             return false;
         }

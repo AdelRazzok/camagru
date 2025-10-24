@@ -319,55 +319,51 @@ if (changeImageBtn) {
 function prepareUploadData() {
     return {
         image: currentImage,
+        image_original_name: fileInput.files[0]?.name || 'uploaded_image.png',
         sticker_id: currentStickerIndex,
-        position: {
-            x: Math.round(currentStickerX),
-            y: Math.round(currentStickerY),
-        },
-        scale: Math.round(currentStickerScale * 100) / 100,
-        canvas_width: CANVAS_WIDTH,
-        canvas_height: CANVAS_HEIGHT,
     };
 }
 
-// if (validateBtn) {
-    // validateBtn.addEventListener('click', async (e) => {
-    //     e.preventDefault();
+if (validateBtn) {
+    validateBtn.addEventListener('click', async (e) => {
+        e.preventDefault();
 
-    //     const uploadData = prepareUploadData();
+        const uploadData = prepareUploadData();
         
-    //     if (!uploadData.image) {
-    //         showErrorToast('No image to upload.');
-    //         return;
-    //     }
+        if (!uploadData.image) {
+            showErrorToast('No image to upload.');
+            return;
+        }
 
-    //     fetch(uploadData.image)
-    //         .then(response => response.blob())
-    //         .then(imageBlob => {
-    //             const formData = new FormData();
-    //             formData.append('image', imageBlob, 'upload.png');
-    //             formData.append('sticker_id', uploadData.sticker_id);
-    //             formData.append('position_x', uploadData.position.x);
-    //             formData.append('position_y', uploadData.position.y);
-    //             formData.append('scale', uploadData.scale);
-    //             formData.append('canvas_width', uploadData.canvas_width);
-    //             formData.append('canvas_height', uploadData.canvas_height);
-            
-    //             return fetch('/upload', {
-    //                 method: 'POST',
-    //                 body: formData,
-    //             });
-    //         })
-    //         .then(response => response.json())
-    //         .then(data => {
-    //             console.log('Upload successful:', data);
-    //         })
-    //         .catch(error => {
-    //             console.error('Upload error:', error);
-    //             showErrorToast('Error uploading the image.');
-    //         });
-    // });
-// }
+        if (uploadData.sticker_id < 0 || uploadData.sticker_id > 4) {
+            showErrorToast('Invalid sticker selected.');
+            return;
+        }
+
+        try {
+            const imageBlob = await fetch(uploadData.image).then(res => res.blob());
+
+            const formData = new FormData();
+            formData.append('image', imageBlob, uploadData.image_original_name);
+            formData.append('image_original_name', uploadData.image_original_name);
+            formData.append('sticker_id', uploadData.sticker_id);
+
+            const response = await fetch('/upload', {
+                method: 'POST',
+                body: formData,
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                showSuccessPreview(data.image_path);
+            }
+        } catch (error) {
+            console.error('Upload error: ', error);
+            showErrorToast('Error uploading the image.');
+        }
+    });
+}
 
 /* ==============================
     NOTIFICATIONS
@@ -386,6 +382,42 @@ function showErrorToast(message) {
     document.body.appendChild(toast);
 
     setTimeout(() => toast.remove(), 5000);
+}
+
+function showSuccessPreview(imagePath) {
+    const modal = document.createElement('div');
+    modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+    modal.id = 'success-modal';
+    
+    modal.innerHTML = `
+        <div class="bg-white rounded-lg shadow-lg p-6 max-w-2xl">
+            <h2 class="text-2xl font-bold mb-4">Image créée avec succès ! 🎉</h2>
+            
+            <img src="${imagePath}" alt="Image fusionnée" class="w-full rounded-lg mb-4" />
+            
+            <div class="flex gap-4">
+                <button id="download-btn" class="flex-1 bg-sky-500 text-white px-4 py-2 rounded hover:bg-sky-600">
+                    Télécharger
+                </button>
+                <button id="close-modal-btn" class="flex-1 bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">
+                    Fermer
+                </button>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+    
+    document.getElementById('download-btn').addEventListener('click', () => {
+        const a = document.createElement('a');
+        a.href = imagePath;
+        a.download = imagePath.split('/').pop();
+        a.click();
+    });
+    
+    document.getElementById('close-modal-btn').addEventListener('click', () => {
+        modal.remove();
+    });
 }
 
 /* ==============================

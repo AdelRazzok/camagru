@@ -81,8 +81,6 @@ require_once dirname(__DIR__) . '/layouts/header.php';
                         >
                     </label>
                 </div>
-
-                <canvas id="upload-canvas" class="hidden"></canvas>
             </form>
         </div>
 
@@ -100,7 +98,7 @@ require_once dirname(__DIR__) . '/layouts/header.php';
                     <button type="button" id="change-image" class="flex-1 bg-red-500 text-white py-2 px-4 rounded-lg font-semibold hover:bg-red-600 transition">
                         <i class="fa-solid fa-xmark mr-2"></i>Cancel
                     </button>
-                    <button type="submit" class="flex-1 bg-sky-400 text-white py-2 px-4 rounded-lg font-semibold hover:bg-sky-500 transition">
+                    <button type="button" id="validate-btn" class="flex-1 bg-sky-400 text-white py-2 px-4 rounded-lg font-semibold hover:bg-sky-500 transition">
                         <i class="fa-solid fa-check mr-2"></i>Validate
                     </button>
                 </div>

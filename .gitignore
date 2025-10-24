@@ -12,3 +12,9 @@
 
 # Docker files
 database
+
+# uploaded files
+uploads/
+
+# system files
+.DS_Store
