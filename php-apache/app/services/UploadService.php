@@ -98,7 +98,9 @@ class UploadService
             ];
         }
 
-        $image->setFilePath($filepath);
+        $webRoot = '/var/www/html';
+        $relativePath = (strpos($filepath, $webRoot) === 0) ? substr($filepath, strlen($webRoot)) : $filepath;
+        $image->setFilePath($relativePath);
 
         imagedestroy($imageFile);
         imagedestroy($sticker);

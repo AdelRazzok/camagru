@@ -1,5 +1,4 @@
 all:
-	mkdir -p /home/arazzok/Documents/camagru/database
 	docker-compose -f ./docker-compose.yml up -d --build
 
 up:

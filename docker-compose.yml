@@ -15,7 +15,7 @@ services:
       - postgres
       - mailcatcher
     volumes:
-      - ./php-apache/app:/var/www/html
+      - app-volume:/var/www/html
     restart: on-failure
 
   postgres:
@@ -31,7 +31,7 @@ services:
     ports:
       - "5433:5432"
     volumes:
-      - database:/var/lib/postgresql/data
+      - postgres-volume:/var/lib/postgresql/data
     restart: on-failure
 
   mailcatcher:
@@ -56,12 +56,10 @@ services:
     restart: on-failure
 
 volumes:
-  database:
+  app-volume:
     driver: local
-    driver_opts:
-      type: none
-      device: /home/arazzok/Documents/camagru/database
-      o: bind
+  postgres-volume:
+    driver: local
 
 networks:
   camagru:

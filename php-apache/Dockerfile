@@ -22,6 +22,10 @@ RUN a2enmod rewrite
 
 COPY /app /var/www/html/
 
+RUN chown -R www-data:www-data /var/www/html && \
+    chmod -R 755 /var/www/html && \
+    chmod 644 /var/www/html/.htaccess
+
 RUN echo "upload_max_filesize = 10M" >> $PHP_INI_DIR/php.ini-development && \
     echo "post_max_size = 10M" >> $PHP_INI_DIR/php.ini-development
 
@@ -29,13 +33,8 @@ RUN mv "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"
 
 COPY php.ini $PHP_INI_DIR/conf.d/
 
-COPY apache2.conf /etc/apache2/conf-available/servername.conf
+# COPY apache2.conf /etc/apache2/conf-available/servername.conf
 
-RUN a2enconf servername
-
-COPY entrypoint.sh /usr/local/bin/
-RUN chmod +x /usr/local/bin/entrypoint.sh
+# RUN a2enconf servername
 
 EXPOSE 80
-
-ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
