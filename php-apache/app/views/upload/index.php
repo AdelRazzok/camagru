@@ -77,8 +77,7 @@ require_once dirname(__DIR__) . '/layouts/header.php';
                             name="image"
                             accept="image/jpeg,image/png,image/gif,image/webp"
                             class="hidden"
-                            required
-                        >
+                            required>
                     </label>
                 </div>
             </form>
@@ -111,5 +110,7 @@ require_once dirname(__DIR__) . '/layouts/header.php';
 <script src="/public/js/toast.js"></script>
 <script src="/public/js/upload.js"></script>
 
-<?php require_once dirname(__DIR__) . '/layouts/navbar.php'; ?>
-<?php require_once dirname(__DIR__) . '/layouts/footer.php'; ?>
+<?php
+require_once dirname(__DIR__) . '/layouts/navbar.php';
+require_once dirname(__DIR__) . '/layouts/footer.php';
+?>
