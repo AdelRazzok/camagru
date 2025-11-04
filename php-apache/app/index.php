@@ -4,6 +4,7 @@ require_once __DIR__ . '/autoload.php';
 
 use http\Router;
 use http\AuthMiddleware;
+use http\GuestMiddleware;
 use http\SessionManager;
 use controllers\HomeController;
 use controllers\LoginController;
@@ -11,6 +12,7 @@ use controllers\SignupController;
 use controllers\VerifyController;
 use controllers\PasswordResetController;
 use controllers\UploadController;
+use controllers\ProfileController;
 
 date_default_timezone_set('Europe/Paris');
 
@@ -21,11 +23,19 @@ $router = new Router();
 
 $router->get('/', [HomeController::class, 'index']);
 
-$router->get('/login', [LoginController::class, 'index']);
-$router->post('/login', [LoginController::class, 'authenticate']);
+$router->get('/login', [LoginController::class, 'index'], [
+    'middlewares' => [GuestMiddleware::class]
+]);
+$router->post('/login', [LoginController::class, 'authenticate'], [
+    'middlewares' => [GuestMiddleware::class]
+]);
 
-$router->get('/signup', [SignupController::class, 'index']);
-$router->post('/signup', [SignupController::class, 'store']);
+$router->get('/signup', [SignupController::class, 'index'], [
+    'middlewares' => [GuestMiddleware::class]
+]);
+$router->post('/signup', [SignupController::class, 'store'], [
+    'middlewares' => [GuestMiddleware::class]
+]);
 
 $router->get('/verify-account', [VerifyController::class, 'verifyAccount']);
 $router->get('/resend-verification', [VerifyController::class, 'showResendVerificationForm']);
@@ -43,9 +53,9 @@ $router->post('/upload', [UploadController::class, 'upload'], [
     'middlewares' => [AuthMiddleware::class]
 ]);
 
-// $router->get('/profile', [ProfileController::class, 'index'], [
-//     'middlewares' => [AuthMiddleware::class]
-// ]);
+$router->get('/profile', [ProfileController::class, 'index'], [
+    'middlewares' => [AuthMiddleware::class]
+]);
 
 $router->get('/logout', [LoginController::class, 'logout']);
 
