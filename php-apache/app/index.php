@@ -56,6 +56,9 @@ $router->post('/upload', [UploadController::class, 'upload'], [
 $router->get('/profile', [ProfileController::class, 'index'], [
     'middlewares' => [AuthMiddleware::class]
 ]);
+$router->post('/profile', [ProfileController::class, 'update'], [
+    'middlewares' => [AuthMiddleware::class]
+]);
 
 $router->get('/logout', [LoginController::class, 'logout']);
 

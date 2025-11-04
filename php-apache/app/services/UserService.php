@@ -41,6 +41,43 @@ class UserService
         ];
     }
 
+    public function updateUser(array $data)
+    {
+        $toValidateUser = (new User())
+            ->setId($data['id'])
+            ->setEmail($data['email'])
+            ->setUsername($data['username'])
+            ->setPassword($data['password']);
+
+        if (!$toValidateUser->updateValidate($this->userRepository)) {
+            return [
+                'success' => false,
+                'errors' => $toValidateUser->getErrors(),
+                'data' => [
+                    'email' => $toValidateUser->getEmail(),
+                    'username' => $toValidateUser->getUsername()
+                ]
+            ];
+        }
+
+        $existingUser = $this->userRepository->findById($toValidateUser->getId());
+
+        $existingUser->setEmail($toValidateUser->getEmail());
+        $existingUser->setUsername($toValidateUser->getUsername());
+        if (!empty($data['password'])) {
+            $existingUser->setPassword($data['password']);
+            $existingUser->setHashedPassword(password_hash($data['password'], PASSWORD_DEFAULT));
+        }
+        $existingUser->setEmailNotifOnComment(isset($data['email_notif_on_comment']) && $data['email_notif_on_comment'] == '1');
+
+        $this->userRepository->save($existingUser);
+
+        return [
+            'success' => true,
+            'user' => $existingUser
+        ];
+    }
+
     public function authenticateUser(string $username, string $password): array
     {
         if (empty($username) || empty($password)) {

@@ -21,13 +21,26 @@ $inputClasses = function ($field) use ($errors) {
 </div>
 
 <main class="flex min-h-svh w-full items-center justify-center p-6 md:p-10 bg-gray-100">
+    <?php if (isset($success) && !empty($success)): ?>
+        <div id="toast-success" class="fixed top-4 left-1/2 -translate-x-1/2 w-[90%] md:left-auto md:right-4 md:translate-x-0 md:w-auto bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded shadow-md z-50 transform transition-transform duration-300 ease-in-out">
+            <div class="flex items-center gap-3">
+                <i class="fa-solid fa-circle-check"></i>
+                <p class="text-sm md:pr-3"><?= $success ?></p>
+            </div>
+
+            <button type="button" class="absolute top-0 right-1 text-green-700" onclick="closeToast('toast-success')">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+    <?php endif; ?>
+
     <div class="bg-white rounded-xl shadow-lg p-8 w-full max-w-md">
         <h2 class="text-2xl text-center mb-3 playwrite-be-vlg-400">Profile</h2>
 
         <form action="/profile" method="post" class="flex flex-col">
             <div class="flex flex-col">
                 <label for="email" class="text-sm text-gray-600 font-semibold mb-1">Email</label>
-                <input type="email" name="email" placeholder="john.doe@example.com" class="<?= $inputClasses('email') ?>" value="<?= $user->getEmail() ?>" required>
+                <input type="email" name="email" placeholder="john.doe@example.com" class="<?= $inputClasses('email') ?>" value="<?= $email ?>" required>
 
                 <?php if (!empty($errors['email'])): ?>
                     <p class="text-red-600 text-sm mt-1"><?= $errors['email'] ?></p>
@@ -36,7 +49,7 @@ $inputClasses = function ($field) use ($errors) {
 
             <div class="flex flex-col mt-4">
                 <label for="username" class="text-sm text-gray-600 font-semibold mb-1">Username</label>
-                <input type="text" name="username" placeholder="john_doe" class="<?= $inputClasses('username') ?>" value="<?= $user->getUsername() ?>" required>
+                <input type="text" name="username" placeholder="john_doe" class="<?= $inputClasses('username') ?>" value="<?= $username ?>" required>
 
                 <?php if (!empty($errors['username'])): ?>
                     <p class="text-red-600 text-sm mt-1"><?= $errors['username'] ?></p>
@@ -80,11 +93,14 @@ $inputClasses = function ($field) use ($errors) {
                 <?php endif; ?>
             </div>
 
+            <input type="hidden" name="id" value="<?= $user->getId() ?>">
 
             <button type="submit" class="bg-sky-500 text-white mt-6 py-2 px-4 rounded hover:bg-sky-600 transition duration-200">Update</button>
         </form>
     </div>
 </main>
+
+<script src="/public/js/toast.js"></script>
 
 <?php
 require_once dirname(__DIR__) . '/layouts/navbar.php';

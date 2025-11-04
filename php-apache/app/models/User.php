@@ -132,4 +132,41 @@ class User extends Model
 
         return empty($this->errors);
     }
+
+    public function updateValidate(UserRepositoryInterface $repository): bool
+    {
+        $this->errors = [];
+
+        if (empty($this->email)) {
+            $this->errors['email'] = 'Email is required.';
+        } elseif (!filter_var($this->email, FILTER_VALIDATE_EMAIL)) {
+            $this->errors['email'] = 'Invalid email format.';
+        } elseif (strlen($this->email) > 254) {
+            $this->errors['email'] = 'Email is too long.';
+        } else {
+            $existing = $repository->findByEmail($this->email);
+            if ($existing && $existing->getId() !== $this->id) {
+                $this->errors['email'] = 'You can\'t use this email address.';
+            }
+        }
+
+        if (empty($this->username)) {
+            $this->errors['username'] = 'Username is required.';
+        } elseif (strlen($this->username) < 3 || strlen($this->username) > 20) {
+            $this->errors['username'] = 'Username must be between 3 and 20 characters long.';
+        } else if (!preg_match('/^[a-zA-Z0-9_-]+$/', $this->username)) {
+            $this->errors['username'] = 'Username can only contain letters, numbers, underscores and hyphens.';
+        } else {
+            $existing = $repository->findByUsername($this->username);
+            if ($existing && $existing->getId() !== $this->id) {
+                $this->errors['username'] = 'Username is already taken.';
+            }
+        }
+
+        if (!empty($this->password) && strlen($this->password) < 8) {
+            $this->errors['password'] = 'Password must be at least 8 characters long.';
+        }
+
+        return empty($this->errors);
+    }
 }
