@@ -79,6 +79,32 @@ class SQLImageRepository implements ImageRepositoryInterface
         return $result;
     }
 
+    public function getCommentCounts(array $imageIds): array
+    {
+        $result = [];
+
+        if (empty($imageIds)) {
+            return $result;
+        }
+
+        $placeholders = implode(',', array_fill(0, count($imageIds), '?'));
+        $sql = "SELECT image_id, COUNT(*) as comment_count FROM comments WHERE image_id IN ($placeholders) GROUP BY image_id";
+
+        $stmt = $this->conn->prepare($sql);
+
+        foreach ($imageIds as $index => $id) {
+            $stmt->bindValue($index + 1, $id, PDO::PARAM_INT);
+        }
+
+        $stmt->execute();
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        foreach ($rows as $row) {
+            $result[(int)$row['image_id']] = (int)$row['comment_count'];
+        }
+        return $result;
+    }
+
     public function save(Image $image): void
     {
         if (!($image instanceof Image)) {

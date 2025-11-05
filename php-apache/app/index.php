@@ -7,14 +7,15 @@ use http\middlewares\AuthMiddleware;
 use http\middlewares\GuestMiddleware;
 use http\middlewares\ApiAuthMiddleware;
 use http\SessionManager;
+use controllers\CommentController;
 use controllers\HomeController;
 use controllers\LikeController;
 use controllers\LoginController;
-use controllers\SignupController;
-use controllers\VerifyController;
 use controllers\PasswordResetController;
-use controllers\UploadController;
 use controllers\ProfileController;
+use controllers\SignupController;
+use controllers\UploadController;
+use controllers\VerifyController;
 
 date_default_timezone_set('Europe/Paris');
 
@@ -63,6 +64,14 @@ $router->post('/profile', [ProfileController::class, 'update'], [
 ]);
 
 $router->post('/image/{id}/like', [LikeController::class, 'toggleLike'], [
+    'middlewares' => [ApiAuthMiddleware::class]
+]);
+
+$router->get('/image/{id}/comments', [CommentController::class, 'listComments'], [
+    'middlewares' => [ApiAuthMiddleware::class]
+]);
+
+$router->post('/image/{id}/comment', [CommentController::class, 'store'], [
     'middlewares' => [ApiAuthMiddleware::class]
 ]);
 

@@ -3,12 +3,13 @@
 namespace controllers;
 
 use http\Response;
+use core\ApiController;
 use database\Postgresql;
 use repositories\SQLLikeRepository;
 use repositories\SQLImageRepository;
 use http\SessionManager;
 
-class LikeController
+class LikeController extends ApiController
 {
     private SQLLikeRepository $likeRepository;
     private SQLImageRepository $imageRepository;
@@ -60,18 +61,5 @@ class LikeController
         $count = $counts[$imageId] ?? 0;
 
         $this->jsonResponse(['liked' => $liked, 'count' => $count], $status);
-    }
-
-    private function jsonResponse(array $data, int $status = Response::HTTP_OK): void
-    {
-        http_response_code($status);
-        header('Content-Type: application/json; charset=utf-8');
-        echo json_encode($data);
-        exit;
-    }
-
-    private function jsonError(string $message, int $status): void
-    {
-        $this->jsonResponse(['error' => $message], $status);
     }
 }

@@ -29,6 +29,7 @@ class FeedService
 
         $imageIds = array_map(fn($img) => $img->getId(), $images);
         $likeCounts = $this->imageRepository->getLikeCounts($imageIds) ?? [];
+        $commentCounts = $this->imageRepository->getCommentCounts($imageIds) ?? [];
 
         $likedIds = [];
         if ($currentUserId !== null) {
@@ -45,7 +46,7 @@ class FeedService
                 'file_path' => $image->getFilePath(),
                 'author' => $user->getUsername(),
                 'like_count' => $likeCounts[$id] ?? 0,
-                'comment_count' => 0,
+                'comment_count' => $commentCounts[$id] ?? 0,
                 'user_liked' => isset($likedIds[$id]),
                 'created_at' => $image->getCreatedAt()->format('d/m/Y - H:i'),
             ];

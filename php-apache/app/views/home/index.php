@@ -64,7 +64,7 @@ require_once dirname(__DIR__) . '/layouts/header.php';
                                     <span class="like-icon"><?= $user_liked ? '❤️' : '🤍' ?></span>
                                     <span class="like-count text-lg"><?= $like_count ?></span>
                                 </button>
-                                <button class="text-2xl">
+                                <button class="toggle-comments-btn text-2xl" data-image-id="<?= $image_id ?>">
                                     <span class="comment-icon">💬</span>
                                     <span class="comment-count text-lg"><?= $comment_count ?></span>
                                 </button>
@@ -72,10 +72,27 @@ require_once dirname(__DIR__) . '/layouts/header.php';
                             <p class="text-xs text-gray-500 mt-2"><?= $created_at ?></p>
                         </div>
 
-                        <!-- Comments Section -->
-                        <div class="p-4">
-                            <div id="comments-<?= $image_id ?>" class="space-y-3 mb-4 max-h-48 overflow-y-auto">
-                            </div>
+                        <div class="comments-section hidden" id="comments-section-<?= $image_id ?>">
+                            <div id="comments-<?= $image_id ?>" class="space-y-3 mb-4 max-h-48 overflow-y-auto hidden px-4"></div>
+
+                            <?php if ($session->has('user')): ?>
+                                <div class="p-4 border-t">
+                                    <form class="add-comment-form" data-image-id="<?= $image_id ?>">
+                                        <div class="flex gap-2">
+                                            <input
+                                                type="text"
+                                                name="content"
+                                                placeholder="Add a comment..."
+                                                maxlength="500"
+                                                class="flex-1 px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-sky-500"
+                                                required>
+                                            <button type="submit" class="bg-sky-500 text-white px-4 py-2 rounded text-sm hover:bg-sky-600">
+                                                Send
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            <?php endif; ?>
                         </div>
                     </article>
                 <?php endforeach; ?>
@@ -86,6 +103,7 @@ require_once dirname(__DIR__) . '/layouts/header.php';
 
 <script src="/public/js/toast.js"></script>
 <script src="/public/js/likes.js"></script>
+<script src="/public/js/comments.js"></script>
 
 <?php
 require_once dirname(__DIR__) . '/layouts/navbar.php';

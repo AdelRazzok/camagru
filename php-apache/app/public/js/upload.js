@@ -140,7 +140,7 @@ if (captureBtn) {
         captureCanvas.height = video.videoHeight;
 
         captureCtx.drawImage(video, 0, 0, captureCanvas.width, captureCanvas.height);
-        
+
         currentImage = captureCanvas.toDataURL('image/png');
         currentStickerIndex = 0;
 
@@ -219,7 +219,7 @@ function drawCanvas() {
 
         const stickerImg = new Image();
         stickerImg.onerror = () => {
-            console.error('Error loading sticker:', stickers[currentStickerIndex]);
+            showErrorToast('Error loading stickers.');
         };
         stickerImg.onload = () => {
             currentStickerWidth = stickerImg.width;
@@ -231,7 +231,13 @@ function drawCanvas() {
             const stickerWidth = currentStickerWidth * currentStickerScale;
             const stickerHeight = currentStickerHeight * currentStickerScale;
 
-            ctx.drawImage(stickerImg, currentStickerX, currentStickerY, stickerWidth, stickerHeight);
+            ctx.drawImage(
+                stickerImg,
+                currentStickerX,
+                currentStickerY,
+                stickerWidth,
+                stickerHeight
+            );
         };
         stickerImg.src = stickers[currentStickerIndex];
     };
@@ -260,7 +266,6 @@ function showStickerPreview(mode) {
 }
 
 function hideStickerPreview(mode) {
-
     if (mode === 'camera') {
         document.getElementById('webcam')?.classList.remove('hidden');
         document.getElementById('capture-btn')?.classList.remove('hidden');
@@ -349,7 +354,7 @@ if (validateBtn) {
         e.preventDefault();
 
         const uploadData = prepareUploadData();
-        
+
         if (!uploadData.image) {
             showErrorToast('No image to upload.');
             return;
@@ -361,7 +366,7 @@ if (validateBtn) {
         }
 
         try {
-            const imageBlob = await fetch(uploadData.image).then(res => res.blob());
+            const imageBlob = await fetch(uploadData.image).then((res) => res.blob());
 
             const formData = new FormData();
             formData.append('image', imageBlob, uploadData.image_original_name);
@@ -380,7 +385,6 @@ if (validateBtn) {
                 resetUploadForm();
             }
         } catch (error) {
-            console.error('Upload error: ', error);
             showErrorToast('Error uploading the image.');
         }
     });
