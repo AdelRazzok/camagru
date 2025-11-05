@@ -56,6 +56,20 @@ class SQLUserRepository implements UserRepositoryInterface
         return $userData ? $this->mapToUser($userData) : null;
     }
 
+    public function getLikedImageIdsByUser(int $userId): array
+    {
+        $stmt = $this->conn->prepare('SELECT image_id FROM likes WHERE user_id = :user_id');
+        $stmt->bindValue(':user_id', $userId, PDO::PARAM_INT);
+        $stmt->execute();
+
+        $ids = [];
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        foreach ($rows as $row) {
+            $ids[] = (int)$row['image_id'];
+        }
+        return $ids;
+    }
+
     public function save(User $user): User
     {
         if (!($user instanceof User)) {

@@ -3,10 +3,12 @@
 require_once __DIR__ . '/autoload.php';
 
 use http\Router;
-use http\AuthMiddleware;
-use http\GuestMiddleware;
+use http\middlewares\AuthMiddleware;
+use http\middlewares\GuestMiddleware;
+use http\middlewares\ApiAuthMiddleware;
 use http\SessionManager;
 use controllers\HomeController;
+use controllers\LikeController;
 use controllers\LoginController;
 use controllers\SignupController;
 use controllers\VerifyController;
@@ -58,6 +60,10 @@ $router->get('/profile', [ProfileController::class, 'index'], [
 ]);
 $router->post('/profile', [ProfileController::class, 'update'], [
     'middlewares' => [AuthMiddleware::class]
+]);
+
+$router->post('/image/{id}/like', [LikeController::class, 'toggleLike'], [
+    'middlewares' => [ApiAuthMiddleware::class]
 ]);
 
 $router->get('/logout', [LoginController::class, 'logout']);

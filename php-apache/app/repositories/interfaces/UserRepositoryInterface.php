@@ -10,6 +10,7 @@ interface UserRepositoryInterface
     public function findById(int $id): ?User;
     public function findByEmail(string $email): ?User;
     public function findByUsername(string $username): ?User;
+    public function getLikedImageIdsByUser(int $userId): array;
     public function save(User $entity): User;
     public function delete(int $id): void;
 }

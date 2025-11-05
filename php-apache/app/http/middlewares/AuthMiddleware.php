@@ -1,9 +1,10 @@
 <?php
 
-namespace http;
+namespace http\middlewares;
 
 use http\Request;
 use http\Response;
+use http\SessionManager;
 
 class AuthMiddleware
 {

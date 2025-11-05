@@ -1,11 +1,12 @@
 <?php
 
-namespace http;
+namespace http\middlewares;
 
 use http\Request;
 use http\Response;
+use http\SessionManager;
 
-class GuestMiddleware
+class ApiAuthMiddleware
 {
     private SessionManager $session;
 
@@ -16,10 +17,10 @@ class GuestMiddleware
 
     public function handle(Request $request, callable $next)
     {
-        if ($this->session->has('user')) {
-            $response = new Response(Response::HTTP_SEE_OTHER);
-            $response->addHeader('Location', '/');
-            $response->send();
+        if (!$this->session->has('user')) {
+            http_response_code(Response::HTTP_UNAUTHORIZED);
+            header('Content-Type: application/json; charset=utf-8');
+            echo json_encode(['error' => 'Unauthorized']);
             exit;
         }
         return $next($request);
