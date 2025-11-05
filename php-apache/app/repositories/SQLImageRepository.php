@@ -18,7 +18,7 @@ class SQLImageRepository implements ImageRepositoryInterface
 
     public function findAll(): array
     {
-        $stmt = $this->conn->prepare('SELECT * FROM images');
+        $stmt = $this->conn->prepare('SELECT * FROM images ORDER BY created_at DESC');
         $stmt->execute();
         $imagesData = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -27,7 +27,6 @@ class SQLImageRepository implements ImageRepositoryInterface
             $images[] = $this->mapToImage($imageData);
         }
         return $images;
-
     }
 
     public function findById(int $id): ?Image
@@ -73,7 +72,8 @@ class SQLImageRepository implements ImageRepositoryInterface
                         file_size = :file_size,
                         updated_at = :updated_at
                 WHERE id = :id
-            ');
+            '
+            );
             $stmt->bindValue(':id', $image->getId(), PDO::PARAM_INT);
         } else {
             $stmt = $this->conn->prepare(
@@ -117,4 +117,3 @@ class SQLImageRepository implements ImageRepositoryInterface
         return $image;
     }
 }
-
