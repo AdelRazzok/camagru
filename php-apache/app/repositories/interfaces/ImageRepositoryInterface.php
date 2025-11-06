@@ -12,5 +12,5 @@ interface ImageRepositoryInterface
     public function getLikeCounts(array $imageIds): array;
     public function getCommentCounts(array $imageIds): array;
     public function save(Image $image): void;
-    public function delete(int $id): void;
+    public function delete(int $id): bool;
 }

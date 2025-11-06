@@ -26,14 +26,14 @@ require_once dirname(__DIR__) . '/layouts/header.php';
             <div class="space-y-8">
                 <?php foreach ($images as $post): ?>
                     <?php
-                    $image = $post['image'];
-                    $image_id = $image->getId();
-                    $file_path = htmlspecialchars($post['file_path']);
-                    $author = htmlspecialchars($post['author']);
-                    $created_at = htmlspecialchars($post['created_at']);
-                    $like_count = $post['like_count'];
-                    $user_liked = $post['user_liked'];
-                    $comment_count = $post['comment_count'];
+                        $image = $post['image'];
+                        $image_id = $image->getId();
+                        $file_path = htmlspecialchars($post['file_path']);
+                        $author = htmlspecialchars($post['author']);
+                        $created_at = htmlspecialchars($post['created_at']);
+                        $like_count = $post['like_count'];
+                        $user_liked = $post['user_liked'];
+                        $comment_count = $post['comment_count'];
                     ?>
 
                     <article
@@ -45,10 +45,18 @@ require_once dirname(__DIR__) . '/layouts/header.php';
                         data-created-at="<?= $created_at ?>"
                         data-comment-count="<?= $comment_count ?>">
 
-                        <div class="px-4 py-3 rounded-t-lg">
+                        <div class="flex items-center justify-between px-4 py-3 rounded-t-lg">
                             <p class="font-semibold text-sm">
                                 <?= $author ?>
                             </p>
+
+                            <?php if ($post['user_is_owner']): ?>
+                                <button
+                                    class="delete-post-btn text-red-500 text-xl hover:text-red-700"
+                                    data-image-id="<?php echo $post['image']->getId(); ?>"
+                                    title="Delete Post"
+                                >✕</button>
+                            <?php endif; ?>
                         </div>
 
                         <div class="aspect-square bg-gray-100">
@@ -104,6 +112,7 @@ require_once dirname(__DIR__) . '/layouts/header.php';
 <script src="/public/js/toast.js"></script>
 <script src="/public/js/likes.js"></script>
 <script src="/public/js/comments.js"></script>
+<script src="/public/js/posts.js"></script>
 
 <?php
 require_once dirname(__DIR__) . '/layouts/navbar.php';

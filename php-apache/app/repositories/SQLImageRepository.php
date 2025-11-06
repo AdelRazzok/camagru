@@ -149,11 +149,19 @@ class SQLImageRepository implements ImageRepositoryInterface
         }
     }
 
-    public function delete(int $id): void
+    public function delete(int $id): bool
     {
-        $stmt = $this->conn->prepare('DELETE FROM images WHERE id = :id');
-        $stmt->bindValue(':id', $id, PDO::PARAM_INT);
-        $stmt->execute();
+        $this->conn->beginTransaction();
+        try {
+            $this->conn->query("DELETE FROM likes WHERE image_id = $id");
+            $this->conn->query("DELETE FROM comments WHERE image_id = $id");
+            $this->conn->query("DELETE FROM images WHERE id = $id");
+            $this->conn->commit();
+            return true;
+        } catch (\Exception $e) {
+            $this->conn->rollBack();
+            return false;
+        }
     }
 
     private function mapToImage(array $data): Image

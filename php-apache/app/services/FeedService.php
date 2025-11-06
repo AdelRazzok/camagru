@@ -48,6 +48,7 @@ class FeedService
                 'like_count' => $likeCounts[$id] ?? 0,
                 'comment_count' => $commentCounts[$id] ?? 0,
                 'user_liked' => isset($likedIds[$id]),
+                'user_is_owner' => $currentUserId === $image->getUserId(),
                 'created_at' => $image->getCreatedAt()->format('d/m/Y - H:i'),
             ];
         }

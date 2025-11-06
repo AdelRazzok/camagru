@@ -2,8 +2,8 @@
 
 namespace controllers;
 
-use http\Response;
 use core\ApiController;
+use http\Response;
 use http\SessionManager;
 use database\Postgresql;
 use repositories\SQLUserRepository;

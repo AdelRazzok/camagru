@@ -12,6 +12,7 @@ use controllers\HomeController;
 use controllers\LikeController;
 use controllers\LoginController;
 use controllers\PasswordResetController;
+use controllers\PostController;
 use controllers\ProfileController;
 use controllers\SignupController;
 use controllers\UploadController;
@@ -72,6 +73,10 @@ $router->get('/image/{id}/comments', [CommentController::class, 'listComments'],
 ]);
 
 $router->post('/image/{id}/comment', [CommentController::class, 'store'], [
+    'middlewares' => [ApiAuthMiddleware::class]
+]);
+
+$router->delete('/image/{id}', [PostController::class, 'delete'], [
     'middlewares' => [ApiAuthMiddleware::class]
 ]);
 
