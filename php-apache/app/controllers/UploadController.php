@@ -10,6 +10,7 @@ use services\UploadService;
 
 class UploadController
 {
+    private SQLImageRepository $imageRepository;
     private UploadService $uploadService;
     private SessionManager $session;
 
@@ -20,13 +21,16 @@ class UploadController
             (int)getenv('POSTGRES_PORT')
         );
 
-        $imageRepository = new SQLImageRepository($db->getConnection());
-        $this->uploadService = new UploadService($imageRepository);
+        $this->imageRepository = new SQLImageRepository($db->getConnection());
+        $this->uploadService = new UploadService($this->imageRepository);
         $this->session = SessionManager::getInstance();
     }
 
     public function showUploadForm()
     {
+        $currentUserId = $this->session->get('user')->getId();
+        $userImages = $this->imageRepository->findByUserId($currentUserId);
+
         require_once dirname(__DIR__) . '/views/upload/index.php';
     }
 

@@ -53,7 +53,7 @@ class SQLImageRepository implements ImageRepositoryInterface
 
     public function findByUserId(int $user_id): array
     {
-        $stmt = $this->conn->prepare('SELECT * FROM images WHERE user_id = :user_id');
+        $stmt = $this->conn->prepare('SELECT * FROM images WHERE user_id = :user_id ORDER BY created_at DESC');
         $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
         $stmt->execute();
         $imagesData = $stmt->fetchAll(PDO::FETCH_ASSOC);

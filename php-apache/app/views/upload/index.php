@@ -16,7 +16,7 @@ require_once dirname(__DIR__) . '/layouts/header.php';
     <?php endif; ?>
 </div>
 
-<main class="flex min-h-svh w-full items-center justify-center p-6 md:p-10 bg-gray-100">
+<main class="flex flex-col md:flex-row min-h-svh w-full items-center justify-center gap-6 p-6 md:p-10 bg-gray-100">
     <?php if (isset($error) && !empty($error)): ?>
         <div id="toast-error" class="fixed top-4 left-1/2 -translate-x-1/2 w-[90%] md:left-auto md:right-4 md:translate-x-0 md:w-auto bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded shadow-md z-50">
             <div class="flex items-center gap-3">
@@ -103,8 +103,37 @@ require_once dirname(__DIR__) . '/layouts/header.php';
                 </div>
             </div>
         </div>
-
     </div>
+
+    <aside class="flex flex-col w-full md:w-64 bg-white rounded-xl shadow-lg p-6 max-h-[calc(100vh-250px)]">
+        <h3 class="text-xl mb-4 text-gray-800 playwrite-be-vlg-400">
+            <i class="fa-solid fa-images mr-2"></i>Recent Posts
+        </h3>
+
+        <?php if (!empty($userImages)): ?>
+            <div class="flex flex-col gap-3 overflow-y-auto flex-1">
+                <?php foreach ($userImages as $image): ?>
+                    <div class="relative group cursor-pointer overflow-hidden rounded-lg flex-shrink-0">
+                        <img 
+                            src="<?= htmlspecialchars($image->getFilePath()) ?>" 
+                            alt="User post"
+                            class="w-full h-40 object-cover rounded-lg transition-transform hover:scale-110">
+                        <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-40 transition rounded-lg flex items-center justify-center">
+                            <span class="text-white text-xs font-semibold opacity-0 group-hover:opacity-100 transition">
+                                <?= $image->getCreatedAt()->format('d/m/Y') ?>
+                            </span>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        <?php else: ?>
+            <div class="flex flex-col items-center justify-center py-8 text-gray-500">
+                <i class="fa-solid fa-image text-3xl mb-2"></i>
+                <p class="text-sm text-center">No posts yet.<br>Create your first one!</p>
+            </div>
+        <?php endif; ?>
+    </aside>
+
 </main>
 
 <script src="/public/js/toast.js"></script>
