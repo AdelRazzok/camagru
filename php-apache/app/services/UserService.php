@@ -17,8 +17,8 @@ class UserService
     public function createUser(string $email, string $username, string $password): array
     {
         $user = (new User())
-            ->setEmail($email)
-            ->setUsername($username)
+            ->setEmail(htmlspecialchars($email))
+            ->setUsername(htmlspecialchars($username))
             ->setPassword($password);
 
         if (!$user->validate($this->userRepository)) {

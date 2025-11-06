@@ -25,8 +25,13 @@ class HomeController
 
     public function index()
     {
-        $images = $this->feedService->getFeed();
+        $page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
+        $result = $this->feedService->getFeed($page);
+        $images = $result['posts'];
+        $currentPage = $result['current_page'];
+        $totalPages = $result['total_pages'];
         $title = 'Camagru - Home';
+
         require_once dirname(__DIR__) . '/views/home/index.php';
     }
 }

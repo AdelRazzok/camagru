@@ -105,6 +105,35 @@ require_once dirname(__DIR__) . '/layouts/header.php';
                     </article>
                 <?php endforeach; ?>
             </div>
+
+            <?php if ($totalPages > 1): ?>
+                <div class="flex justify-center items-center gap-2 mt-8">
+                    <?php if ($currentPage > 1): ?>
+                        <a href="?page=<?= $currentPage - 1 ?>" class="px-4 py-2 bg-sky-500 text-white rounded hover:bg-sky-600">
+                            ← Previous
+                        </a>
+                    <?php endif; ?>
+
+                    <div class="flex gap-1">
+                        <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+                            <?php if ($i == $currentPage): ?>
+                                <span class="px-3 py-2 bg-sky-500 text-white rounded font-semibold"><?= $i ?></span>
+                            <?php else: ?>
+                                <a href="?page=<?= $i ?>" class="px-3 py-2 border border-sky-500 text-sky-500 rounded hover:bg-sky-500 hover:text-white">
+                                    <?= $i ?>
+                                </a>
+                            <?php endif; ?>
+                        <?php endfor; ?>
+                    </div>
+
+                    <?php if ($currentPage < $totalPages): ?>
+                        <a href="?page=<?= $currentPage + 1 ?>" class="px-4 py-2 bg-sky-500 text-white rounded hover:bg-sky-600">
+                            Next →
+                        </a>
+                    <?php endif; ?>
+                </div>
+            <?php endif; ?>
+
         <?php endif; ?>
     </div>
 </main>

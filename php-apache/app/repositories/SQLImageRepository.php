@@ -16,9 +16,21 @@ class SQLImageRepository implements ImageRepositoryInterface
         $this->conn = $conn;
     }
 
-    public function findAll(): array
+    public function findAll(?int $offset = null, ?int $limit = null): array
     {
-        $stmt = $this->conn->prepare('SELECT * FROM images ORDER BY created_at DESC');
+        $sql = 'SELECT * FROM images ORDER BY created_at DESC';
+
+        if ($offset !== null && $limit !== null) {
+            $sql .= ' LIMIT :limit OFFSET :offset';
+        }
+
+        $stmt = $this->conn->prepare($sql);
+
+        if ($offset !== null && $limit !== null) {
+            $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+            $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+        }
+
         $stmt->execute();
         $imagesData = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -105,6 +117,14 @@ class SQLImageRepository implements ImageRepositoryInterface
         return $result;
     }
 
+    public function countAll(): int
+    {
+        $stmt = $this->conn->prepare('SELECT COUNT(*) as count FROM images');
+        $stmt->execute();
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return (int)$result['count'];
+    }
+
     public function save(Image $image): void
     {
         if (!($image instanceof Image)) {
@@ -153,9 +173,18 @@ class SQLImageRepository implements ImageRepositoryInterface
     {
         $this->conn->beginTransaction();
         try {
-            $this->conn->query("DELETE FROM likes WHERE image_id = $id");
-            $this->conn->query("DELETE FROM comments WHERE image_id = $id");
-            $this->conn->query("DELETE FROM images WHERE id = $id");
+            $stmt = $this->conn->prepare('DELETE FROM likes WHERE image_id = :id');
+            $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+            $stmt->execute();
+
+            $stmt = $this->conn->prepare('DELETE FROM comments WHERE image_id = :id');
+            $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+            $stmt->execute();
+
+            $stmt = $this->conn->prepare('DELETE FROM images WHERE id = :id');
+            $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+            $stmt->execute();
+
             $this->conn->commit();
             return true;
         } catch (\Exception $e) {

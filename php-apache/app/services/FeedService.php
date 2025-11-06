@@ -10,6 +10,7 @@ class FeedService
 {
     private ImageRepositoryInterface $imageRepository;
     private UserRepositoryInterface $userRepository;
+    private const POSTS_PER_PAGE = 5;
 
     public function __construct(
         ImageRepositoryInterface $imageRepository,
@@ -19,10 +20,13 @@ class FeedService
         $this->userRepository = $userRepository;
     }
 
-    public function getFeed(): array
+    public function getFeed(int $page = 1): array
     {
         $feed = [];
-        $images = $this->imageRepository->findAll();
+        $offset = ($page - 1) * self::POSTS_PER_PAGE;
+
+        $images = $this->imageRepository->findAll($offset, self::POSTS_PER_PAGE);
+        $totalImages = $this->imageRepository->countAll();
 
         $session = SessionManager::getInstance();
         $currentUserId = $session->has('user') ? $session->get('user')->getId() : null;
@@ -52,6 +56,12 @@ class FeedService
                 'created_at' => $image->getCreatedAt()->format('d/m/Y - H:i'),
             ];
         }
-        return $feed;
+
+        return [
+            'posts' => $feed,
+            'current_page' => $page,
+            'total_pages' => ceil($totalImages / self::POSTS_PER_PAGE),
+            'total_posts' => $totalImages,
+        ];
     }
 }
