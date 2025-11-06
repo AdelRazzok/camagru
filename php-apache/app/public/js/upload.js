@@ -383,11 +383,26 @@ if (validateBtn) {
             if (data.success) {
                 showSuccessToast('Image uploaded successfully! 🎉');
                 resetUploadForm();
+                refreshRecentPosts();
             }
         } catch (error) {
             showErrorToast('Error uploading the image.');
         }
     });
+}
+
+function refreshRecentPosts() {
+    fetch('/upload')
+        .then((response) => response.text())
+        .then((html) => {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            const newAside = doc.querySelector('aside');
+            document.querySelector('aside').replaceWith(newAside);
+        })
+        .catch(() => {
+            showErrorToast('Error refreshing recent posts.');
+        });
 }
 
 /* ==============================
