@@ -6,6 +6,7 @@ use http\Response;
 use core\ApiController;
 use http\SessionManager;
 use database\Postgresql;
+use repositories\SQLUserRepository;
 use repositories\SQLCommentRepository;
 use repositories\SQLImageRepository;
 use services\CommentService;
@@ -24,7 +25,8 @@ class CommentController extends ApiController
         );
 
         $commentRepository = new SQLCommentRepository($db->getConnection());
-        $this->commentService = new CommentService($commentRepository);
+        $userRepository = new SQLUserRepository($db->getConnection());
+        $this->commentService = new CommentService($commentRepository, $userRepository);
         $this->imageRepository = new SQLImageRepository($db->getConnection());
         $this->session = SessionManager::getInstance();
     }
@@ -42,7 +44,7 @@ class CommentController extends ApiController
         $result = $this->commentService->createComment($imageId, $user->getId(), $content);
 
         if (!$result['success']) {
-            $this->jsonError('Failed to create comment.', Response::HTTP_BAD_REQUEST);
+            $this->jsonError($result['errors']['content'], Response::HTTP_BAD_REQUEST);
         }
 
         $this->jsonResponse([

@@ -67,5 +67,14 @@ class EmailService
         return $this->send($to, $subject, 'reset_password', $data);
     }
 
-    public function sendCommentNotification() {}
+    public function sendCommentNotification(string $to, string $username, string $commentContent): bool
+    {
+        $subject = 'New Reply to Your Comment';
+
+        $data = [
+            'username' => $username,
+            'commentContent' => $commentContent
+        ];
+        return $this->send($to, $subject, 'comment_notification', $data);
+    }
 }
