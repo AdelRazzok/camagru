@@ -118,7 +118,7 @@ require_once dirname(__DIR__) . '/layouts/header.php';
                             src="<?= htmlspecialchars($image->getFilePath()) ?>" 
                             alt="User post"
                             class="w-full h-40 object-cover rounded-lg transition-transform hover:scale-110">
-                        <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-40 transition rounded-lg flex items-center justify-center">
+                        <div class="absolute inset-0 bg-black opacity-0 group-hover:opacity-40 transition rounded-lg flex items-center justify-center">
                             <span class="text-white text-xs font-semibold opacity-0 group-hover:opacity-100 transition">
                                 <?= $image->getCreatedAt()->format('d/m/Y') ?>
                             </span>
