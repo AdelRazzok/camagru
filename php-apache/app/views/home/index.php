@@ -23,7 +23,7 @@ require_once dirname(__DIR__) . '/layouts/header.php';
                 <p class="text-gray-500 text-lg">No posts yet.</p>
             </div>
         <?php else: ?>
-            <div class="space-y-8">
+            <div class="space-y-8 post-container">
                 <?php foreach ($images as $post): ?>
                     <?php
                         $image = $post['image'];

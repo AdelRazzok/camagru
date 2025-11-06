@@ -13,7 +13,15 @@ document.querySelectorAll('.delete-post-btn').forEach(btn => {
                 return;
             }
 
-            location.reload();
+            const postsContainer = document.querySelector('.post-container');
+            const remainingPosts = postsContainer?.querySelectorAll('article').length - 1;
+            const currentPage = new URLSearchParams(window.location.search).get('page') || '1';
+
+            if (remainingPosts === 0 && currentPage > 1) {
+                window.location.href = `?page=${currentPage - 1}`;
+            } else {
+                location.reload();
+            }
         }
     });
 });
